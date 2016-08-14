@@ -1,5 +1,5 @@
 # TaskForest
----
+
 [![Build Status](https://travis-ci.org/aijaz/taskforest.svg?branch=master)](https://travis-ci.org/aijaz/taskforest)
 
 **TaskForest** is a simple but expressive job scheduler that allows you to

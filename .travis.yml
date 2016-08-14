@@ -1,1 +1,5 @@
 language: perl
+
+branches:
+  only:
+  - master
