@@ -323,6 +323,12 @@ sub getOptions {
     if ( ($tainted_options->{instructions_dir})) {
         if ($tainted_options->{instructions_dir} =~ m!^([a-z0-9/_:\\\.\-]*)!i) { $new_options->{instructions_dir} = $1; } else { croak "Bad instructions_dir"; }
     }
+    if ( ($tainted_options->{mailgun_api_key})) {
+        if ($tainted_options->{mailgun_api_key} =~ m!^([a-z0-9_\-\.]*)!i) { $new_options->{mailgun_api_key} = $1; } else { croak "Bad mailgun_api_key"; }
+    }
+    if ( ($tainted_options->{mailgun_domain})) {
+        if ($tainted_options->{mailgun_domain} =~ m!^([a-z0-9_\-\.]*)!i) { $new_options->{mailgun_domain} = $1; } else { croak "Bad mailgun_domain"; }
+    }
     if ( ($tainted_options->{smtp_server})) {
         if ($tainted_options->{smtp_server} =~ m!^([a-z0-9_\-\.]*)!i) { $new_options->{smtp_server} = $1; } else { croak "Bad smtp server"; }
     }
