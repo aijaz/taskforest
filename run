@@ -31,6 +31,8 @@ my $email                  = $ENV{TASKFOREST_EMAIL}            ;
 my $retry_email            = $ENV{TASKFOREST_RETRY_EMAIL}      ;
 my $no_retry_email         = $ENV{TASKFOREST_NO_RETRY_EMAIL}   ;
 my $instructions_dir       = $ENV{TASKFOREST_INSTRUCTIONS_DIR} ;
+my $mailgun_api_key        = $ENV{TASKFOREST_MAILGUN_API_KEY}  ;
+my $mailgun_domain         = $ENV{TASKFOREST_MAILGUN_DOMAIN}   ;
 my $smtp_server            = $ENV{TASKFOREST_SMTP_SERVER}      ;
 my $smtp_port              = $ENV{TASKFOREST_SMTP_PORT}        ;
 my $smtp_sender            = $ENV{TASKFOREST_SMTP_SENDER}      ;
@@ -115,7 +117,7 @@ sub sendEmail {
 
     return if ($reason eq 'fail' && !$email);
 
-    return if (!$smtp_server);
+    return if (!$smtp_server && !$mailgun_api_key);
 
     my $to = $email;
     if ($reason eq 'retry') {
@@ -174,31 +176,54 @@ sub sendEmail {
 
     my $body = join("\n", @text);
 
-    my $smtp = Net::SMTP->new(
-        Host      => "$smtp_server:$smtp_port",
-        Timeout   => $smtp_timeout,
-        Hello     => $smtp_sender,
-        );
-
-    return unless $smtp;
-    
-    $smtp->mail($smtp_sender);
-    $smtp->to($to);
-
     $mail_return_path = $mail_from unless $mail_return_path;
     $mail_reply_to    = $mail_from unless $mail_reply_to;
 
-    $smtp->data();
-    $smtp->datasend(join("\n",
-                    "From: $mail_from",
-                    "Return-Path: $mail_return_path",
-                    "Reply-To: $mail_reply_to",
-                    "To: $to",
-                    "Subject: $subject"));
-    $smtp->datasend("\n\n");
-    $smtp->datasend($body);
-    $smtp->dataend();
-    $smtp->quit;
+    if ($mailgun_api_key && $mailgun_domain) {
+        my $time = time();
+        my $body_file = "/tmp/body_${time}_$$";
+        open (BODY_FILE, ">$body_file") || die "can't open file $body_file for writing";
+        print BODY_FILE "$body\n";
+        close BODY_FILE;
+
+        my $emailScript = "" .
+                "curl -s --user 'api:$mailgun_api_key' " .
+                "https://api.mailgun.net/v3/$mailgun_domain/messages " .
+                "-F from='$mail_from' " .
+                "-F to='$to' " .
+                "-F subject='$subject' " .
+                "-F text='<$body_file' " .
+                "";
+
+        system($emailScript);
+        unlink $body_file;
+
+    }
+    elsif ($smtp_server) {
+        my $smtp = Net::SMTP->new(
+            Host      => "$smtp_server:$smtp_port",
+            Timeout   => $smtp_timeout,
+            Hello     => $smtp_sender,
+            );
+
+        return unless $smtp;
+        
+        $smtp->mail($smtp_sender);
+        $smtp->to($to);
+
+        $smtp->data();
+        $smtp->datasend(join("\n",
+                        "From: $mail_from",
+                        "Return-Path: $mail_return_path",
+                        "Reply-To: $mail_reply_to",
+                        "To: $to",
+                        "Subject: $subject"));
+        $smtp->datasend("\n\n");
+        $smtp->datasend($body);
+        $smtp->dataend();
+        $smtp->quit;
+    }
+
 
 }
 

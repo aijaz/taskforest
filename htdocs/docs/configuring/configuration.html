@@ -99,6 +99,20 @@
 <a class="config_file" href="/docs/configuring/options.html#retry_sleep">retry_sleep</a>              = 300
 
 
+<span class="comments"># If you want to use the Mailgun service instead of SMTP </span>
+<span class="comments"># to send emails out, for example, when a job fails</span>
+<span class="comments"># this will be your Mailgun API key</span>
+<a class="config_file" href="/docs/configuring/options.html#mailgun_api_key">mailgun_api_key</a>         = "key-XXXXX"
+
+<span class="comments"># And this will be domain corresponding to tha mailgun api key</span>
+<a class="config_file" href="/docs/configuring/options.html#mailgun_domain">mailgun_domain</a>          = "example.com"
+
+
+
+<span class="comments"># The default SMTP port is 25.</span>
+<a class="config_file" href="/docs/configuring/options.html#smtp_port">smtp_port</a>                = 25
+
+
 <span class="comments"># This is the SMTP server that will be used to send </span>
 <span class="comments"># emails out when a job fails, for example</span>
 <a class="config_file" href="/docs/configuring/options.html#smtp_server">smtp_server</a>              = "localhost"

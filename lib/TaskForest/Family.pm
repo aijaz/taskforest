@@ -669,6 +669,8 @@ sub runReadyJobs {
             $ENV{TASKFOREST_RETRY_EMAIL}            = defOr($job->{retry_email}, "");
             $ENV{TASKFOREST_NO_RETRY_EMAIL}         = defOr($job->{no_retry_email}, "");
             $ENV{TASKFOREST_INSTRUCTIONS_DIR}       = defOr($job->{instructions_dir}, "");
+            $ENV{TASKFOREST_MAILGUN_API_KEY}        = defOr($self->{options}->{mailgun_api_key}, "");
+            $ENV{TASKFOREST_MAILGUN_DOMAIN}         = defOr($self->{options}->{mailgun_domain}, "");
             $ENV{TASKFOREST_SMTP_SERVER}            = defOr($self->{options}->{smtp_server}, "");
             $ENV{TASKFOREST_SMTP_PORT}              = defOr($self->{options}->{smtp_port}, 0);
             $ENV{TASKFOREST_SMTP_SENDER}            = defOr($self->{options}->{smtp_sender}, "");

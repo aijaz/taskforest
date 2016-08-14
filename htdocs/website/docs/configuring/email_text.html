@@ -128,6 +128,26 @@
 </code></pre></div>
 
 <p>
+  TaskForest also supports use of the <a href="https://mailgun.com">Mailgun</a> email service: 
+</p>
+
+<div class="code"><pre><code><span class="comments"># This is your Mailgun API key</span>
+<a class="config_file" href="/docs/configuring/options.html#mailgun_api_key">mailgun_api_key</a>                = "key-XXXXX"
+
+<span class="comments"># This is your mailgun domain name</span>
+<a class="config_file" href="/docs/configuring/options.html#mailgun_domain">mailgun_domain</a>                  = "example.com"
+
+<span class="comments"># Please be advised: when using Mailgun, the following</span>
+<span class="comments"># variables are <b>NOT</b> used: </span>
+<span class="comments"># * <a class="config_file" href="/docs/configuring/options.html#mail_reply_to">mail_reply_to</a></span>
+<span class="comments"># * <a class="config_file" href="/docs/configuring/options.html#mail_return_path">mail_return_path</a></span>
+
+<span class="comments"># If <a class="config_file" href="/docs/configuring/options.html#mailgun_api_key">mailgun_api_key</a> is specified, then</span>
+<span class="comments"># mail will only be sent via Mailgun, and not over SMTP.</span></code></pre></div>
+
+
+
+<p>
   What's left to be explained is how TaskForest chose the email's subject
   and the body of the email.  The subject of the email will contain the
   Family name and Job name preceded by 'RETRY', 'FAIL' or 'RETRY_SUCCESS',
@@ -218,6 +238,20 @@
     <dd>
       This is the value of
       the <a href="/docs/configuring/options.html#instructions_dir">instructions_dir</a>
+      configuration variable.
+    </dd>
+
+    <dt>TASKFOREST_MAILGUN_API_KEY</dt>
+    <dd>
+      This is the value of
+      the <a href="/docs/configuring/options.html#mailgun_api_key">mailgun_api_key</a>
+      configuration variable.
+    </dd>
+
+    <dt>TASKFOREST_MAILGUN_API_KEY</dt>
+    <dd>
+      This is the value of
+      the <a href="/docs/configuring/options.html#mailgun_domain">mailgun_domain</a>
       configuration variable.
     </dd>
 

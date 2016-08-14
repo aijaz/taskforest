@@ -85,6 +85,8 @@ my %all_options = (
     date                   => 's',
     calendar_dir           => 's',
     instructions_dir       => 's',
+    mailgun_api_key        => 's',
+    mailgun_domain         => 's',
     smtp_server            => 's',
     smtp_port              => 's',
     smtp_sender            => 's',
@@ -214,6 +216,8 @@ sub getOptions {
     $tainted_options->{default_time_zone}      = 'America/Chicago' unless defined $tainted_options->{default_time_zone};
     $tainted_options->{date}                   = ''                unless defined $tainted_options->{date};
     $tainted_options->{token}                  = {}                unless defined $tainted_options->{token};
+    $tainted_options->{mailgun_api_key}        = ''                unless defined $tainted_options->{mailgun_api_key};
+    $tainted_options->{mailgun_domain}         = ''                unless defined $tainted_options->{mailgun_domain};
     $tainted_options->{smtp_server}            = ''                unless defined $tainted_options->{smtp_server};
     $tainted_options->{smtp_port}              = 25                unless defined $tainted_options->{smtp_port};
     $tainted_options->{smtp_timeout}           = 60                unless defined $tainted_options->{smtp_timeout};
