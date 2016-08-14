@@ -1,7 +1,9 @@
 # TaskForest
-    
-A simple but expressive job scheduler that allows you to
-chain jobs/tasks and create time dependencies. Uses text config files to
+---
+[![Build Status](https://travis-ci.org/aijaz/taskforest.svg?branch=master)](https://travis-ci.org/aijaz/taskforest)
+
+**TaskForest** is a simple but expressive job scheduler that allows you to
+chain jobs/tasks and create time dependencies. It uses text config files to
 specify task dependencies.
 
 ### Executive Summary 
