@@ -1,0 +1,6 @@
+2016/08/14 12:14:48   INFO  120:Logs.pm                          - ********************************************************************************
+2016/08/14 12:14:48   INFO  120:Logs.pm                          - New Loop
+2016/08/14 12:14:48   INFO  129:TaskForest.pm                    - Calling cycle from runMainLoop
+2016/08/14 12:14:48   INFO  609:Family.pm                        - Forked child process J3 76597
+2016/08/14 12:14:51   INFO   91:026_Tomorrows_Logs.t             - Sleeping for 2 seconds
+2016/08/14 12:14:53   INFO  133:Logs.pm                          - Deleting error log because it is empty
