@@ -146,10 +146,24 @@
 <span class="comments"># mail will only be sent via Mailgun, and not over SMTP.</span></code></pre></div>
 
 
+<p>
+  TaskForest also supports use of the <a href="https://twilio.com">Mailgun</a> SMS service: 
+</p>
+
+<div class="code"><pre><code><span class="comments"># This is your Twilio Account SID</span>
+<a class="config_file" href="/docs/configuring/options.html#twilio_account_sid">twilio_account_sid</a>                = "ACXXXX"
+
+<span class="comments"># This is your Twilio Auth Token</span>
+<a class="config_file" href="/docs/configuring/options.html#twilio_auth_token">twilio_auth_token</a>                  = "abcdefj"
+
+<span class="comments"># This is your Twilio Phone number</span>
+<a class="config_file" href="/docs/configuring/options.html#twilio_phone_number">twilio_phone_number</a>                  = "+13125551212"</code></pre></div>
+
+
 
 <p>
-  What's left to be explained is how TaskForest chose the email's subject
-  and the body of the email.  The subject of the email will contain the
+  What's left to be explained is how TaskForest chooses the subject
+  and the body of the email and SMS.  The subject of the email will contain the
   Family name and Job name preceded by 'RETRY', 'FAIL' or 'RETRY_SUCCESS',
   depending on whether the job failed and is about to
   be <a href="/docs/configuring/retry.html">retried</a> (after
@@ -173,7 +187,7 @@
   environment:
 </p>
 
-<div class=code>
+<div class="code">
   <dl>
     <dt>TASKFOREST_FAMILY_NAME</dt>
     <dd>This is the name of the family in which this job was run.</dd>
@@ -325,6 +339,27 @@
       configuration variable.
     </dd>
 
+    <dt>TASKFOREST_TWILIO_ACCOUNT_SID</dt>
+    <dd>
+      This is the value of
+      the <a href="/docs/configuring/options.html#twilio_account_sid">twilio_account_sid</a>
+      configuration variable.
+    </dd>
+
+    <dt>TASKFOREST_TWILIO_AUTH_TOKEN</dt>
+    <dd>
+      This is the value of
+      the <a href="/docs/configuring/options.html#twilio_auth_token">twilio_auth_token</a>
+      configuration variable.
+    </dd>
+
+    <dt>TASKFOREST_TWILIO_PHONE_NUMBER</dt>
+    <dd>
+      This is the value of
+      the <a href="/docs/configuring/options.html#twilio_phone_number">twilio_phone_number</a>
+      configuration variable.
+    </dd>
+
   </dl>
 </div>
   
@@ -338,10 +373,10 @@
   above).  Let's also refer to the job name as <code>&#36;job_name</code>,
   and the family name as <code>&#36;family_name</code>.  TaskForest will
   look for the following files in the following order, inserting their
-  contents into the email body.
+  contents into the <b>email</b> body.
 </p>
 
-<div class=code>
+<div class="code">
   <dl>
     <dt><code>&#36;instructions_dir/HEADER</code></dt>
     <dd>
@@ -398,6 +433,54 @@ No. of Retries: &#36;TASKFOREST_RETRY of &#36;TASKFOREST_NUM_RETRIES</code></pre
       that generated the above email, the contents of this file were:
       <div class="codecode"><pre><code>------------------------------------------------------------
 For help, please see http://www.taskforest.com/</code></pre></div>
+    </dd>
+    
+  </dl>  
+</div>
+
+
+<p>
+  TaskForest will
+  look for the following files in the following order, inserting their
+  contents into the <b>SMS</b> body.
+</p>
+
+<div class="code">
+  <dl>
+    <dt><code>&#36;instructions_dir/SMS_HEADER</code></dt>
+    <dd>
+      This is a header that will show up in every SMS.
+    </dd>
+    
+    <dt><code>&#36;instructions_dir/SMS_HEADER.&#36;reason</code></dt>
+    <dd>
+      This is a header that will be displayed just for that reason.  In
+      other words, it will be one of three files: SMS_HEADER.RETRY, SMS_HEADER.FAIL,
+      and SMS_HEADER.RETRY_SUCCESS. 
+    </dd>
+    
+    <dt><code>&#36;instructions_dir/SMS_FAMILY.&#36;family_name.&#36;reason</code></dt>
+    <dd>
+      This is file that can contain specific instructions for that family
+      and reason. 
+    </dd>
+
+    <dt><code>&#36;instructions_dir/SMS_JOB.&#36;job_name.&#36;reason</code></dt>
+    <dd>
+      This is file that can contain specific instructions for that job
+      and reason.  
+    </dd>
+
+    <dt><code>&#36;instructions_dir/SMS_FOOTER.&#36;reason</code></dt>
+    <dd>
+      This is a footer that will be displayed just for that reason.  In
+      other words, it will be one of three files: SMS_FOOTER.RETRY,
+      SMS_FOOTER.FAIL, and SMS_FOOTER.RETRY_SUCCESS.
+    </dd>
+    
+    <dt><code>&#36;instructions_dir/SMS_FOOTER</code></dt>
+    <dd>
+      This is a footer that will show up in every SMS. 
     </dd>
     
   </dl>  

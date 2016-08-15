@@ -669,6 +669,9 @@ sub runReadyJobs {
             $ENV{TASKFOREST_RETRY_EMAIL}            = defOr($job->{retry_email}, "");
             $ENV{TASKFOREST_NO_RETRY_EMAIL}         = defOr($job->{no_retry_email}, "");
             $ENV{TASKFOREST_INSTRUCTIONS_DIR}       = defOr($job->{instructions_dir}, "");
+            $ENV{TASKFOREST_TWILIO_ACCOUNT_SID}     = defOr($self->{options}->{twilio_account_sid}, "");
+            $ENV{TASKFOREST_TWILIO_AUTH_CODE}       = defOr($self->{options}->{twilio_auth_code}, "");
+            $ENV{TASKFOREST_TWILIO_PHONE_NUMBER}    = defOr($self->{options}->{twilio_auth_code}, "");
             $ENV{TASKFOREST_MAILGUN_API_KEY}        = defOr($self->{options}->{mailgun_api_key}, "");
             $ENV{TASKFOREST_MAILGUN_DOMAIN}         = defOr($self->{options}->{mailgun_domain}, "");
             $ENV{TASKFOREST_SMTP_SERVER}            = defOr($self->{options}->{smtp_server}, "");
@@ -680,6 +683,11 @@ sub runReadyJobs {
             $ENV{TASKFOREST_SMTP_TIMEOUT}           = defOr($self->{options}->{smtp_timeout}, 0);
             $ENV{TASKFOREST_RETRY_SUCCESS_EMAIL}    = defOr($job->{retry_success_email}, "");
             $ENV{TASKFOREST_NO_RETRY_SUCCESS_EMAIL} = defOr($job->{no_retry_success_email}, "");
+            $ENV{TASKFOREST_PHONE}                  = defOr($job->{phone}, "");
+            $ENV{TASKFOREST_RETRY_PHONE}            = defOr($job->{retry_phone}, "");
+            $ENV{TASKFOREST_NO_RETRY_PHONE}         = defOr($job->{no_retry_phone}, "");
+            $ENV{TASKFOREST_RETRY_SUCCESS_PHONE}    = defOr($job->{retry_success_phone}, "");
+            $ENV{TASKFOREST_NO_RETRY_SUCCESS_PHONE} = defOr($job->{no_retry_success_phone}, "");
             
             exec("$wrapper",
                 ) or croak "Can't exec: $!\n";
