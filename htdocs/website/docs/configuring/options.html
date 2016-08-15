@@ -311,7 +311,7 @@
   <p>
     When a job fails, but is being <a href="/docs/configuring/retry.html">automatically
     retried</a>, <a href="/docs/configuring/email.html">emails are sent</a> to this address, as opposed to the one
-    stored in the 'email' setting.  If <a href="/docs/configuring/options.html#no_retry_email">no_retry_mail</a> is
+    stored in the 'email' setting.  If <a href="/docs/configuring/options.html#no_retry_email">no_retry_email</a> is
     set, then no email will be sent in this case.
   </p>
 
@@ -349,6 +349,59 @@
     This is the Mailgun domain to be used with the Mailgun API key.
   </p>
 
+
+  <div class="option_def"><a name="twilio_account_sid">--twilio_account_sid=s</a></div>
+  <p>
+    If you want to use the Twilio service to send an SMS when a job fails this should be your secret Twilio Account SID.
+  </p>
+
+  <div class="option_def"><a name="twilio_auth_code">--twilio_auth_code=s</a></div>
+  <p>
+    This is your Twilio Auth Code.
+  </p>
+
+  <div class="option_def"><a name="twilio_phone_number">--twilio_phone_number=s</a></div>
+  <p>
+    This is your Twilio outbound phone number.
+  </p>
+
+  <div class="option_def"><a name="phone">--phone=e</a></div>
+  <p>
+    When a job fails, <a href="/docs/configuring/email.html">SMS are sent</a> to this phone number.
+  </p>
+
+  <div class="option_def"><a name="retry_phone">--retry_phone=e</a></div>
+  <p>
+    When a job fails, but is being <a href="/docs/configuring/retry.html">automatically
+    retried</a>, <a href="/docs/configuring/email.html">SMS are sent</a> to this address, as opposed to the one
+    stored in the 'phone' setting.  If <a href="/docs/configuring/options.html#no_retry_phone">no_retry_phone</a> is
+    set, then no SMS will be sent in this case.
+  </p>
+
+  <div class="option_def"><a name="retry_success_phone">--retry_success_phone=e</a></div>
+  <p>
+    When a job fails, is <a href="/docs/configuring/retry.html">automatically retried</a> one or more times and then
+    suceeds, <a href="/docs/configuring/email.html">SMS are sent</a> to this address, as opposed to any of the
+    others.  If <a href="/docs/configuring/options.html#no_retry_success_email">no_retry_success_phone</a> is set, then no
+    SMS will be sent in this case.
+  </p>
+
+
+  <div class="option_def"><a name="no_retry_phone">--no_retry_phone=n</a></div>
+  <p>
+    If this is set to 1, then an <a href="/docs/configuring/email.html">SMS</a> will not be sent when a job fails and
+    is being <a href="/docs/configuring/retry.html">automatically retried</a>.  The default value is 0 (retry SMS
+    will be sent).
+  </p>
+
+
+  <div class="option_def"><a name="no_retry_success_phone">--no_retry_success_phone=n</a></div>
+  <p>
+    If this is set to 1, then an <a href="/docs/configuring/email.html">SMS</a> will not be sent when a job fails, was
+    <a href="/docs/configuring/retry.html">automatically retried</a> one or more times and then finally succeeded.  The
+    default value is 0 (retry_success SMS will be sent).
+  </p>
+  
 
   
 

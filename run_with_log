@@ -17,32 +17,40 @@ use DateTime;
 use Net::SMTP;
 
 
-my $family_name            = $ENV{TASKFOREST_FAMILY_NAME}      ;
-my $job_name               = $ENV{TASKFOREST_JOB_NAME}         ;
-my $job_file_name          = $ENV{TASKFOREST_JOB_FILE_NAME}    ;
-my $log_dir                = $ENV{TASKFOREST_LOG_DIR}          ;
-my $script_dir             = $ENV{TASKFOREST_JOB_DIR}          ;
-my $pid_file               = $ENV{TASKFOREST_PID_FILE}         ;
-my $success_file           = $ENV{TASKFOREST_SUCCESS_FILE}     ;
-my $failure_file           = $ENV{TASKFOREST_FAILURE_FILE}     ;
-my $unique_id              = $ENV{TASKFOREST_UNIQUE_ID}        ;
-my $num_retries            = $ENV{TASKFOREST_NUM_RETRIES}      ; 
-my $retry_sleep            = $ENV{TASKFOREST_RETRY_SLEEP}      ; 
-my $email                  = $ENV{TASKFOREST_EMAIL}            ;
-my $retry_email            = $ENV{TASKFOREST_RETRY_EMAIL}      ;
-my $no_retry_email         = $ENV{TASKFOREST_NO_RETRY_EMAIL}   ;
-my $instructions_dir       = $ENV{TASKFOREST_INSTRUCTIONS_DIR} ;
-my $mailgun_api_key        = $ENV{TASKFOREST_MAILGUN_API_KEY}  ;
-my $mailgun_domain         = $ENV{TASKFOREST_MAILGUN_DOMAIN}   ;
-my $smtp_server            = $ENV{TASKFOREST_SMTP_SERVER}      ;
-my $smtp_port              = $ENV{TASKFOREST_SMTP_PORT}        ;
-my $smtp_sender            = $ENV{TASKFOREST_SMTP_SENDER}      ;
-my $mail_from              = $ENV{TASKFOREST_MAIL_FROM}        ;
-my $mail_reply_to          = $ENV{TASKFOREST_MAIL_REPLY_TO}    ;
+my $family_name            = $ENV{TASKFOREST_FAMILY_NAME}        ;
+my $job_name               = $ENV{TASKFOREST_JOB_NAME}           ;
+my $job_file_name          = $ENV{TASKFOREST_JOB_FILE_NAME}      ;
+my $log_dir                = $ENV{TASKFOREST_LOG_DIR}            ;
+my $script_dir             = $ENV{TASKFOREST_JOB_DIR}            ;
+my $pid_file               = $ENV{TASKFOREST_PID_FILE}           ;
+my $success_file           = $ENV{TASKFOREST_SUCCESS_FILE}       ;
+my $failure_file           = $ENV{TASKFOREST_FAILURE_FILE}       ;
+my $unique_id              = $ENV{TASKFOREST_UNIQUE_ID}          ;
+my $num_retries            = $ENV{TASKFOREST_NUM_RETRIES}        ; 
+my $retry_sleep            = $ENV{TASKFOREST_RETRY_SLEEP}        ; 
+my $phone                  = $ENV{TASKFOREST_PHONE}              ;
+my $retry_phone            = $ENV{TASKFOREST_RETRY_PHONE}        ;
+my $no_retry_phone         = $ENV{TASKFOREST_NO_RETRY_PHONE}     ;
+my $email                  = $ENV{TASKFOREST_EMAIL}              ;
+my $retry_email            = $ENV{TASKFOREST_RETRY_EMAIL}        ;
+my $no_retry_email         = $ENV{TASKFOREST_NO_RETRY_EMAIL}     ;
+my $instructions_dir       = $ENV{TASKFOREST_INSTRUCTIONS_DIR}   ;
+my $twilio_account_sid     = $ENV{TASKFOREST_TWILIO_ACCOUNT_SID} ;
+my $twilio_auth_token      = $ENV{TASKFOREST_TWILIO_AUTH_TOKEN}  ;
+my $twilio_phone_number    = $ENV{TASKFOREST_TWILIO_PHONE_NUMBER};
+my $mailgun_api_key        = $ENV{TASKFOREST_MAILGUN_API_KEY}    ;
+my $mailgun_domain         = $ENV{TASKFOREST_MAILGUN_DOMAIN}     ;
+my $smtp_server            = $ENV{TASKFOREST_SMTP_SERVER}        ;
+my $smtp_port              = $ENV{TASKFOREST_SMTP_PORT}          ;
+my $smtp_sender            = $ENV{TASKFOREST_SMTP_SENDER}        ;
+my $mail_from              = $ENV{TASKFOREST_MAIL_FROM}          ;
+my $mail_reply_to          = $ENV{TASKFOREST_MAIL_REPLY_TO}      ;
 my $mail_return_path       = $ENV{TASKFOREST_MAIL_RETURN_PATH}    ;
 my $smtp_timeout           = $ENV{TASKFOREST_SMTP_TIMEOUT}     ;
 my $retry_success_email    = $ENV{TASKFOREST_RETRY_SUCCESS_EMAIL}      ;
 my $no_retry_success_email = $ENV{TASKFOREST_NO_RETRY_SUCCESS_EMAIL}   ;
+my $retry_success_phone    = $ENV{TASKFOREST_RETRY_SUCCESS_PHONE}      ;
+my $no_retry_success_phone = $ENV{TASKFOREST_NO_RETRY_SUCCESS_PHONE}   ;
 
 my $start_time       = time;
 my $pid              = $$;
@@ -111,14 +119,17 @@ while ($retry <= $num_retries) {
             close STDOUT_FH;
         }
         sendEmail('retry');
+        sendSms('retry');
         sleep ($retry_sleep);
     }
     else {
         if ($rc != 0) {
             sendEmail('fail');
+            sendSms('fail');
         }
         elsif ($retry) {
             sendEmail('retry_success');
+            sendSms('retry_success');
         }
         last;
     }
@@ -315,6 +326,88 @@ sub sendEmail {
     }
 }
 
+sub sendSms {
+    
+    my ($reason) = @_;
+
+    # Try to exit without doing anything first.
+    #
+    return if ($reason eq 'retry_success' && $no_retry_success_phone);
+
+    return if ($reason eq 'retry_success' && !$retry_success_phone && !$retry_phone && !$phone);
+
+    return if ($reason eq 'retry' && $no_retry_phone);
+
+    return if ($reason eq 'retry' && !$retry_phone && !$phone);
+
+    return if ($reason eq 'fail' && !$phone);
+
+    return if (!$twilio_account_sid || !$twilio_phone_number || !$twilio_auth_token);
+
+    my $to = $phone;
+    if ($reason eq 'retry') {
+        $to = $retry_phone if $retry_phone;
+    }
+
+    if ($reason eq 'retry_success') {
+        $to = $retry_phone if $retry_phone;
+        $to = $retry_success_phone if $retry_success_phone;
+    }
+
+    # get text that needs to be sent out
+    #
+    my @text = ();
+    my $found = 0;
+    
+    if ($instructions_dir && -d $instructions_dir) { 
+        if (-e "$instructions_dir/SMS_HEADER") {
+            push (@text, contentsOf("$instructions_dir/SMS_HEADER"));
+        }
+        
+        if (-e "$instructions_dir/SMS_HEADER.$reason") {
+            push (@text, contentsOf("$instructions_dir/SMS_HEADER.$reason"));
+        }
+        
+        if (-e "$instructions_dir/SMS_FAMILY_$family_name.$reason") {
+            push (@text, contentsOf("$instructions_dir/SMS_FAMILY_$family_name.$reason"));
+        }
+        
+        if (-e "$instructions_dir/SMS_JOB_$job_name.$reason") {
+            push (@text, contentsOf("$instructions_dir/SMS_JOB_$job_name.$reason"));
+        }
+        
+        if (-e "$instructions_dir/SMS_FOOTER.$reason") {
+            push (@text, contentsOf("$instructions_dir/SMS_FOOTER.$reason"));
+        }
+
+        if (-e "$instructions_dir/SMS_FOOTER") {
+            push (@text, contentsOf("$instructions_dir/SMS_FOOTER"));
+        }
+    }
+
+    my $subject = uc($reason). " $family_name"."::$job_name";
+
+    my $body = join("\n", @text);
+
+
+    my $time = time();
+    my $body_file = "/tmp/body_${time}_$$";
+    open (BODY_FILE, ">$body_file") || die "can't open file $body_file for writing";
+    print BODY_FILE "$subject\n$body\n";
+    close BODY_FILE;
+
+    my $smsScript = "" .
+                    "curl -X POST 'https://api.twilio.com/2010-04-01/Accounts/$twilio_account_sid/Messages.json' ".
+                    "--data-urlencode To='$to'  ".
+                    "--data-urlencode From='$twilio_phone_number'  ".
+                    "--data-urlencode 'Body\@$body_file'  ".
+                    "-u $twilio_account_sid:$twilio_auth_token".
+            "";
+
+    system($smsScript);
+    unlink $body_file;
+
+}
 
 sub contentsOf {
     my $file = shift;
