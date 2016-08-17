@@ -101,7 +101,7 @@ my %all_options = (
     retry_success_email    => 's',
     no_retry_success_email => undef,
     twilio_account_sid     => 's',
-    twilio_auth_code       => 's',
+    twilio_auth_token      => 's',
     twilio_phone_number    => 's',
     phone                  => 's',
     retry_phone            => 's',
@@ -242,7 +242,7 @@ sub getOptions {
     $tainted_options->{retry_success_email}    = ''                unless defined $tainted_options->{retry_success_email};
     $tainted_options->{no_retry_success_email} = 0                 unless defined $tainted_options->{no_retry_success_email};
     $tainted_options->{twilio_account_sid}     = ''                unless defined $tainted_options->{twilio_account_sid};
-    $tainted_options->{twilio_auth_code}       = ''                unless defined $tainted_options->{twilio_auth_code};
+    $tainted_options->{twilio_auth_token}       = ''                unless defined $tainted_options->{twilio_auth_token};
     $tainted_options->{twilio_phone_number}    = ''                unless defined $tainted_options->{twilio_phone_number};
     $tainted_options->{phone}                  = ''                unless defined $tainted_options->{phone};
     $tainted_options->{retry_phone}            = ''                unless defined $tainted_options->{retry_phone};
@@ -399,8 +399,8 @@ sub getOptions {
     if ( ($tainted_options->{twilio_phone_number})) {
         if ($tainted_options->{twilio_phone_number} =~ m!^([a-z0-9\+]*)!i) { $new_options->{twilio_phone_number} = $1; } else { croak "Bad twilio_phone_number"; }
     }
-    if ( ($tainted_options->{twilio_auth_code})) {
-        if ($tainted_options->{twilio_auth_code} =~ m!^([a-z0-9]*)!i) { $new_options->{twilio_auth_code} = $1; } else { croak "Bad twilio_auth_code"; }
+    if ( ($tainted_options->{twilio_auth_token})) {
+        if ($tainted_options->{twilio_auth_token} =~ m!^([a-z0-9]*)!i) { $new_options->{twilio_auth_token} = $1; } else { croak "Bad twilio_auth_token"; }
     }
 
     if (%$options) {

@@ -670,7 +670,7 @@ sub runReadyJobs {
             $ENV{TASKFOREST_NO_RETRY_EMAIL}         = defOr($job->{no_retry_email}, "");
             $ENV{TASKFOREST_INSTRUCTIONS_DIR}       = defOr($job->{instructions_dir}, "");
             $ENV{TASKFOREST_TWILIO_ACCOUNT_SID}     = defOr($self->{options}->{twilio_account_sid}, "");
-            $ENV{TASKFOREST_TWILIO_AUTH_CODE}       = defOr($self->{options}->{twilio_auth_code}, "");
+            $ENV{TASKFOREST_TWILIO_AUTH_TOKEN}      = defOr($self->{options}->{twilio_auth_token}, "");
             $ENV{TASKFOREST_TWILIO_PHONE_NUMBER}    = defOr($self->{options}->{twilio_phone_number}, "");
             $ENV{TASKFOREST_MAILGUN_API_KEY}        = defOr($self->{options}->{mailgun_api_key}, "");
             $ENV{TASKFOREST_MAILGUN_DOMAIN}         = defOr($self->{options}->{mailgun_domain}, "");
