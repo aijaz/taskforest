@@ -671,7 +671,7 @@ sub runReadyJobs {
             $ENV{TASKFOREST_INSTRUCTIONS_DIR}       = defOr($job->{instructions_dir}, "");
             $ENV{TASKFOREST_TWILIO_ACCOUNT_SID}     = defOr($self->{options}->{twilio_account_sid}, "");
             $ENV{TASKFOREST_TWILIO_AUTH_CODE}       = defOr($self->{options}->{twilio_auth_code}, "");
-            $ENV{TASKFOREST_TWILIO_PHONE_NUMBER}    = defOr($self->{options}->{twilio_auth_code}, "");
+            $ENV{TASKFOREST_TWILIO_PHONE_NUMBER}    = defOr($self->{options}->{twilio_phone_number}, "");
             $ENV{TASKFOREST_MAILGUN_API_KEY}        = defOr($self->{options}->{mailgun_api_key}, "");
             $ENV{TASKFOREST_MAILGUN_DOMAIN}         = defOr($self->{options}->{mailgun_domain}, "");
             $ENV{TASKFOREST_SMTP_SERVER}            = defOr($self->{options}->{smtp_server}, "");
@@ -1239,12 +1239,24 @@ sub _parseJob {
         else {
             $job_object->{email} = $self->{options}->{email};
         }
+        if ($args{phone}) {
+            $job_object->{phone} = $args{phone};
+        }
+        else {
+            $job_object->{phone} = $self->{options}->{phone};
+        }
 
         if ($args{retry_email}) {
             $job_object->{retry_email} = $args{retry_email};
         }
         else {
             $job_object->{retry_email} = $self->{options}->{retry_email};
+        }
+        if ($args{retry_phone}) {
+            $job_object->{retry_phone} = $args{retry_phone};
+        }
+        else {
+            $job_object->{retry_phone} = $self->{options}->{retry_phone};
         }
 
         if ($args{num_retries}) {
@@ -1267,6 +1279,12 @@ sub _parseJob {
         else {
             $job_object->{no_retry_email} = $self->{options}->{no_retry_email};
         }
+        if ($args{no_retry_phone}) {
+            $job_object->{no_retry_phone} = $args{no_retry_phone};
+        }
+        else {
+            $job_object->{no_retry_phone} = $self->{options}->{no_retry_phone};
+        }
 
         if ($args{instructions_dir}) {
             $job_object->{instructions_dir} = $args{instructions_dir};
@@ -1281,12 +1299,24 @@ sub _parseJob {
         else {
             $job_object->{retry_success_email} = $self->{options}->{retry_success_email};
         }
+        if ($args{retry_success_phone}) {
+            $job_object->{retry_success_phone} = $args{retry_success_phone};
+        }
+        else {
+            $job_object->{retry_success_phone} = $self->{options}->{retry_success_phone};
+        }
         
         if ($args{no_retry_success_email}) {
             $job_object->{no_retry_success_email} = $args{no_retry_success_email};
         }
         else {
             $job_object->{no_retry_success_email} = $self->{options}->{no_retry_success_email};
+        }
+        if ($args{no_retry_success_phone}) {
+            $job_object->{no_retry_success_phone} = $args{no_retry_success_phone};
+        }
+        else {
+            $job_object->{no_retry_success_phone} = $self->{options}->{no_retry_success_phone};
         }
         
     }

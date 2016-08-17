@@ -397,7 +397,7 @@ sub getOptions {
         if ($tainted_options->{twilio_account_sid} =~ m!^([a-z0-9]*)!i) { $new_options->{twilio_account_sid} = $1; } else { croak "Bad twilio_account_sid"; }
     }
     if ( ($tainted_options->{twilio_phone_number})) {
-        if ($tainted_options->{twilio_phone_number} =~ m!^([a-z0-9]*)!i) { $new_options->{twilio_phone_number} = $1; } else { croak "Bad twilio_phone_number"; }
+        if ($tainted_options->{twilio_phone_number} =~ m!^([a-z0-9\+]*)!i) { $new_options->{twilio_phone_number} = $1; } else { croak "Bad twilio_phone_number"; }
     }
     if ( ($tainted_options->{twilio_auth_code})) {
         if ($tainted_options->{twilio_auth_code} =~ m!^([a-z0-9]*)!i) { $new_options->{twilio_auth_code} = $1; } else { croak "Bad twilio_auth_code"; }
