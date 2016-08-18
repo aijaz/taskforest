@@ -51,12 +51,11 @@ If you're using this program, I would love to hear from you. Please contact me o
 
 Many thanks to the following for their help and support:
 
-- SourceForge
+- GitHub
 - Rosco Rouse
 - Svetlana Lemeshov
 - Teresia Arthur
 - Steve Hulet
-- GitHub
 
 I would also like to thank Randal L. Schwartz for teaching the readers
 of the Feb 1999 issue of Web Techniques how to write a pre-forking web
