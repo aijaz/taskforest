@@ -184,7 +184,45 @@ server, the code upon which the TaskForest Web server is built.</p>
 yui to the open source community.</p>
 
 <h2>
-<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentation</h2>
+<a id="installing-taskforest" class="anchor" href="#installing-taskforest" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing TaskForest</h2>
+
+<p>This program depends on DateTime, for timezone support. You can install DateTime as follows:</p>
+
+<pre><code>perl -MCPAN -e 'install DateTime'
+</code></pre>
+
+<p>Similarly, as of version 1.10, it also depends on Config::General and Log::Log4perl. You can install these as follows:</p>
+
+<pre><code>perl -MCPAN -e 'install Config::General'
+perl -MCPAN -e 'install Log::Log4perl'
+</code></pre>
+
+<p>As of version 1.15, it also depends on the LWP libraries such as HTTP::Daemon, HTTP::Request, etc.</p>
+
+<p>Download the latest TaskForest repository. You can install it the 'normal' way:</p>
+
+<pre><code>cd taskforest
+perl Makefile.PL
+make
+make test
+make install
+If you don't have root access, and want to install in a local directory like ~/perl, replace the third line with
+</code></pre>
+
+<pre><code>perl Makefile.PL prefix=~/perl
+</code></pre>
+
+<h2>
+<a id="configuring-taskforest" class="anchor" href="#configuring-taskforest" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuring TaskForest</h2>
+
+<p>There are two main parts to configuring TaskForest: configuring the Family files that specify job dependencies, and setting the options that determine TaskForest's behavior.</p>
+
+<h3>
+<a id="precedence-of-different-options-sources" class="anchor" href="#precedence-of-different-options-sources" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Precedence of Different Options Sources</h3>
+
+<p>All settings (required and optional) may be specified in a variety of ways: command line, environment variable and config file. The order of preferences is this: Most options have default values. Settings specified in the config file override those defaults. Settings specified in environment variables take override those specified in the config file and the default values. Setting specified on the command line override those specified in envrionment variables, and those specified in the config files and the default values.</p>
+
+<p>The names of the environment variable are the same as the names of the settings on the command line (or in the config file), but they should be in UPPER CASE, with <code>TF_</code> prepended. For example, the environment variable name for the <code>run_wrapper</code> setting is <code>TF_RUN_WRAPPER</code>.</p>
       </section>
     </div>
 
