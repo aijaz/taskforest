@@ -269,7 +269,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_</p>
 <h4>
 <a id="example-1---family-file-named-f_admin" class="anchor" href="#example-1---family-file-named-f_admin" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>EXAMPLE 1 - Family file named F_ADMIN</h4>
 
-<pre lang="config"><code>start =&gt; '02:00', tz =&gt; 'GMT', days =&gt; 'Mon,Wed,Fri'
+<pre><code>start =&gt; '02:00', tz =&gt; 'GMT', days =&gt; 'Mon,Wed,Fri'
 
  J_ROTATE_LOGS()
 </code></pre>
@@ -289,6 +289,404 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_</p>
 <p>To run the program, the system actually runs a wrapper script that invokes the job script. The location of the wrapper script is specified on the command line or in an environment variable.</p>
 
 <p>Now, let's look at a slightly more complicated example:</p>
+
+<h4>
+<a id="example-2---job-dependencies" class="anchor" href="#example-2---job-dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>EXAMPLE 2 - Job Dependencies</h4>
+
+<p>This family file is named WEB_ADMIN.</p>
+
+<pre><code>start =&gt; '02:00', tz =&gt; 'GMT', calendar =&gt; 'Weekdays'
+
+               J_ROTATE_LOGS()
+
+ J_RESOLVE_DNS()       Delete_Old_Logs()
+
+               J_WEB_REPORTS()      
+
+    J_EMAIL_WEB_RPT_DONE()  # send me a notification
+</code></pre>
+
+<p>A few things to point out here:</p>
+
+<ul>
+<li>Blank lines are ignored.</li>
+<li>A hash (#) and anything after it, until the end of the line is treated as a comment and ignored.</li>
+<li>Job and family names do not have to start with J_ or be in upper case.</li>
+<li>Instead of specifying days of the week on which this Family may run, this Family specifies a calendar to which it adheres. The calendar used in this case is called 'Weekdays.' For a detailed description of calendars, please see the <a href="#calendars">Calendars documentation</a>.</li>
+</ul>
+
+<p>It is possible to have a dependency on a job that's in another family. If, for example, J_ROTATE_LOGS was in the Family named LOGS, then the family above would look like this:</p>
+
+<pre><code>start =&gt; '02:00', tz =&gt; 'GMT', calendar =&gt; 'Weekdays'
+
+            LOGS::J_ROTATE_LOGS()
+
+ J_RESOLVE_DNS()       Delete_Old_Logs()
+
+               J_WEB_REPORTS()      
+
+    J_EMAIL_WEB_RPT_DONE()  # send me a notification
+</code></pre>
+
+<p>An external job dependency is different from 'normal' job dependencies, because unlike 'normal' dependencies, it specifies only the dependency, and not when the external job should run. This means that looking at the above family file, we cannot say when J_ROTATE_LOGS will run. More accurately, we cannot say when LOGS::J_ROTATE_LOGS will run. All we know is that after it runs, J_RESOLVE_DNS and Delete_Old_Logs can run (after 2:00 GMT).</p>
+
+<p>This also means that external job dependencies may only be specified on the first line of a Family, or the first line of a group of jobs (see example 4). Therefore the following is not allowed:</p>
+
+<pre><code>start =&gt; '02:00', tz =&gt; 'GMT', calendar =&gt; 'Weekdays'
+
+            LOGS::J_ROTATE_LOGS()
+
+ J_RESOLVE_DNS()       Delete_Old_Logs()
+
+            REPORTS::J_WEB_REPORTS()  # BAD!
+
+    J_EMAIL_WEB_RPT_DONE()  # send me a notification
+</code></pre>
+
+<p>To see how this should be written, we need to know about Job Forests. Since that's described in example 4, we'll defer the solution until then.</p>
+
+<p>One last thing about external job dependencies: just because we're waiting on a job in another family, that doesn't mean that the same job cannot be run in this family. For example, the following is permitted:</p>
+
+<pre><code>start =&gt; '02:00', tz =&gt; 'GMT', calendar =&gt; 'Weekdays'
+
+            LOGS::J_ROTATE_LOGS()
+
+ J_RESOLVE_DNS()       Delete_Old_Logs()
+
+               J_WEB_REPORTS()
+
+    J_EMAIL_WEB_RPT_DONE()  # send me a notification
+
+                J_ROTATE_LOGS()   # This is a different
+                                  # job!
+</code></pre>
+
+<p>The family will not start until J_ROTATE_LOGS has run from the LOGS family. The last job run by this family will be J_ROTATE_LOGS. It has nothing to do with the instance of the job that ran in the LOGS family. Line 11 will actually run the job, while line 3 only checks whether the job has run (by another family). That's what I mean when I say that external dependencies only specify the dependencies, while normal dependencies also specify when the job should run.</p>
+
+<h4>
+<a id="example-3---time-dependencies" class="anchor" href="#example-3---time-dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>EXAMPLE 3 - Time Dependencies</h4>
+
+<p>Let's say that we don't want J_RESOLVE_DNS to start before 9:00 a.m. because it's very IO-intensive and we want to wait until the relatively quiet time of 9:00 a.m. In that case, we can put a time dependency of the job. This adds a restriction to the job, saying that it may not run before the time specified. We would do this as follows:</p>
+
+<pre><code>start =&gt; '02:00', tz =&gt; 'GMT', calendar =&gt; 'Weekdays'
+
+               J_ROTATE_LOGS()
+
+ J_RESOLVE_DNS(start =&gt; '09:00')  Delete_Old_Logs()
+
+               J_WEB_REPORTS()      
+
+    J_EMAIL_WEB_RPT_DONE()  # send me a notification
+</code></pre>
+
+<p>J_ROTATE_LOGS will still start at 2:00, as always. As soon as it succeeds, Delete_Old_Logs is started. If J_ROTATE_LOGS succeeds before 09:00, the system will wait until 09:00 before starting J_RESOLVE_DNS. It is possible that Delete_Old_Logs would have started and complete by then. J_WEB_REPORTS would not have started in that case, because it is dependent on two jobs, and both of them have to run successfully before it can run.</p>
+
+<p>For completeness, you may also specify a timezone for a job's time dependency as follows:</p>
+
+<pre><code>J_RESOLVE_DNS(start=&gt;'10:00', tz=&gt;'America/New_York') ...
+</code></pre>
+
+<h4>
+<a id="example-4---job-forests" class="anchor" href="#example-4---job-forests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>EXAMPLE 4 - Job Forests</h4>
+
+<p>You can see in the example above that line 03 is the start of a group of dependent jobs. No job on any other line can start unless the job on line 03 succeeds. What if you wanted two or more groups of jobs in the same family that start at the same time (barring any time dependencies) and proceed independently of each other?</p>
+
+<p>To do this you would separate the groups with a line containing one or more dashes (only). Consider the following family:</p>
+
+<pre><code>start =&gt; '02:00', tz =&gt; 'GMT', calendar =&gt; 'Weekdays'
+
+               J_ROTATE_LOGS()
+
+ J_RESOLVE_DNS(start =&gt; '09:00')    Delete_Old_Logs()
+
+               J_WEB_REPORTS()      
+
+    J_EMAIL_WEB_RPT_DONE()  # send me a notification
+
+-------------------------------------------------------
+
+ J_UPDATE_ACCOUNTS_RECEIVABLE()
+
+ J_ATTEMPT_CREDIT_CARD_PAYMENTS()
+
+-------------------------------------------------------
+
+ J_SEND_EXPIRING_CARDS_EMAIL()
+
+</code></pre>
+
+<p>Because of the lines of dashes on lines 11 and 17, the jobs on lines 03, 13 and 19 will all start at 02:00. These jobs are independent of each other. J_ATTEMPT_CREDIT_CARD_PAYMENT will not run if J_UPDATE_ACCOUNTS_RECEIVABLE fails. That failure, however will not prevent J_SEND_EXPIRING_CARDS_EMAIL from running.</p>
+
+<p>Finally, you can specify a job to run repeatedly every 'n' minutes, as follows:</p>
+
+<pre><code>start =&gt; '02:00', tz =&gt; 'GMT', calendar =&gt; 'Weekdays'
+
+ J_CHECK_DISK_USAGE(every=&gt;'30', until=&gt;'23:00')
+</code></pre>
+
+<p>This means that J_CHECK_DISK_USAGE will be called every 30 minutes and will not run on or after 23:00. By default, the 'until' time is 23:59. If the job starts at 02:00 and takes 25 minutes to run to completion, the next occurance will still start at 02:30, and not at 02:55. By default, every repeat occurrance will only have one dependency - the time - and will not depend on earlier occurances running successfully or even running at all. If line 03 were:</p>
+
+<pre><code>J_CHECK_DISK_USAGE(every=&gt;'30', until=&gt;'23:00', chained=&gt;1)
+</code></pre>
+
+<p>...then each repeat job will be dependent on the previous occurance.</p>
+
+<p>Now, let's get back to our discussion of external dependencies from example 3. I said that an external dependency may only be specified on the first line of the file or the first line of a group of jobs. This way of specifying a family is not allowed by TaskForest:</p>
+
+<pre><code>start =&gt; '02:00', tz =&gt; 'GMT', calendar =&gt; 'Weekdays'
+
+            LOGS::J_ROTATE_LOGS()
+
+ J_RESOLVE_DNS()       Delete_Old_Logs()
+
+            REPORTS::J_WEB_REPORTS()  # BAD!
+
+    J_EMAIL_WEB_RPT_DONE()  # send me a notification
+</code></pre>
+
+<p>With a few minor modifications, the family can be specified correctly:</p>
+
+<pre><code>start =&gt; '02:00', tz =&gt; 'GMT', calendar =&gt; 'Weekdays'
+
+            LOGS::J_ROTATE_LOGS()
+
+ J_RESOLVE_DNS()       Delete_Old_Logs()
+
+--------------------------------------------
+
+ J_RESOLVE_DNS() Delete_Old_Logs() REPORTS::J_WEB_REPORTS()
+
+   J_EMAIL_WEB_RPT_DONE()  # send me a notification
+</code></pre>
+
+<p>We've moved the external dependency to the first line of it's own section. Now J_EMAIL_WEB_RPT_DONE relies on all 3 jobs, 2 that run in this Family, and one from the REPORTS family.</p>
+
+<h4>
+<a id="example-5---tokens" class="anchor" href="#example-5---tokens" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>EXAMPLE 5 - Tokens</h4>
+
+<p>A token is a dependency. It is something that a job must 'possess' before it can run, if that job needs that token. You can create different types of tokens, giving each type a common name. You can also specify how many instances of tokens of each type are to exist. For example, if the configuration file contained the following lines:</p>
+
+<pre><code> ...   
+ &lt;token T&gt;
+   number = 1
+ &lt;/token&gt;
+ &lt;token U&gt;
+   number = 2
+ &lt;/token&gt;
+ ...
+</code></pre>
+
+<p>...it means that there are two types of tokens: 'T' and 'U'. There is only one instance of token type 'T', and two of type 'U'.</p>
+
+<p>Given the above configuration, if your Family file looked as follows:</p>
+
+<pre><code>start =&gt; '00:00', tz =&gt; 'GMT', days =&gt; 'Mon,Wed,Fri'
+
+ J1( token =&gt; 'T')  J2 ( token =&gt; 'T' ) J3()
+
+-------------------------------------------------------
+
+ J6(token =&gt; 'U') J5(token =&gt; 'U') J4(token =&gt; 'U')
+ J8(token =&gt; 'T,U')
+
+</code></pre>
+
+<p>...then that means that job J1 and J2 both need a token of type 'T' to run. But, there's only one instance of token T, so J1 and J2 cannot both run at the same time (even though they would, if they didn't rely on tokens). The system will sort jobs alphabetically by name and choose the first in the list. In other words, in this case, J1 will run first and J2 will only run after J1 completes (if no other job has taken the token first). To be more accurate, J1 and J3 will run simultaneously, since J3 does not need any tokens.</p>
+
+<p>To be even more accurate, J1, J3, J4 and J5 will run simultaneously. This is because J4, J5 and J6 all rely on token U, but there are only 2 instances of token U. Even though J6 appears on the line before J5 and J4, the system will choose J4 and J5 first, because they appear first in alphabetical order, and J6 will run after one of the other two have completed.</p>
+
+<p>Because the system always chooses the job with the smallest name (alphabetically), it is possible to experience 'resource starvation' - where a job with a 'larger' name could never get an opportunity to run, because there are too many other jobs with smaller names that get to run first by virtue of their names. Future versions of TaskForest will implement heuristics to prevent resource starvations.</p>
+
+<p>Note that J8 relies on two tokens: T and U. It will only run when it can acquire one of both tokens. If it can acquire one, but not the other, it will release the first and try to acquire both at a later time.</p>
+
+<p>Finally, tokens can also be used to control the load on the machine on which taskforest is running. If you've got several independent jobs that don't depend on each other, but which use a fair amount of resources, you can have all the jobs use the same token. Then you can tweak the maximum number of instances of that token to a value that maximizes the number of simultaneous jobs without putting too much strain on the server.</p>
+
+<h4>
+<a id="-example-6---calendars" class="anchor" href="#-example-6---calendars" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="calendars"></a> EXAMPLE 6 - Calendars</h4>
+
+<p>A calendar is a set of rules that defines on what days a job may run. The rules that make up a calendar are specified in the configuration file and the calendars themselves are associated with a Family in the Family file.</p>
+
+<p>Calendar names should contain only the characters shown below:
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-</p>
+
+<p>Let's start with the configuration file. You can have zero or more calendars in the configuration file. Each calendar may be associated with zero or more Families. A calendar consists of one or more rules. All rules belonging to a calendar are consulted in order to determine whether or not the Family should run today. The rules are consulted in the order in which they are specified in the configuration file. Rules may contradict each other. A rule may not conclusively determine whether or not the Family should run today. The last rule that determines whether or not a Family should run today will override any earlier rules. Rules are case insensitive.</p>
+
+<p>Let's see some examples. First, let's see how a Family file specifies a calendar:</p>
+
+<h5>
+<a id="example-61---one-day-only" class="anchor" href="#example-61---one-day-only" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 6.1 - One day only</h5>
+
+<pre><code>start =&gt; '00:00', tz =&gt; 'GMT', calendar =&gt; 'NY2010'
+
+ ...
+</code></pre>
+
+<p>You can see here that instead of the <code>days =&gt; '...'</code>, we have <code>calendar =&gt; 'NY2010'</code>. This tells the system that this family will rely on the calendar named <code>NY2010</code>. This calendar is defined in its own file. The file name should be the same as the calendar name. The directory in which the file exists is specified by the <a href="#calendar_dir">calendar_dir</a> option:</p>
+
+<pre><code>...
+calendar_dir = "/foo/bar/calendars"
+...
+</code></pre>
+
+<p>The file /foo/bar/calendars/NY2010 looks like this (the # symbols and anything after them are comments, just like in the <a href="#configuration_file">configuration file</a>):</p>
+
+<pre><code># NY2010
++ 2010/01/01  # Only valid on New Years Day, 2010
+</code></pre>
+
+<p>This calendar only has one rule. It is "+ 2010/01/01". The '+' in the rule says that if the date specified in this rule matches, then the Family must run on that day. The '+' is optional. This calendar will allow the Family that uses it to run on Jan 1, 2010, and on no other day. Dates in rules should be in the YYYY/MM/DD format.</p>
+
+<h5>
+<a id="example-622---one-month-only" class="anchor" href="#example-622---one-month-only" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 6.22 - One month only</h5>
+
+<p>What if we want a job to run on every day in November 2010? You can use a rule like this:</p>
+
+<pre><code># Nov2010
+
+2010/11/*
+</code></pre>
+
+<p>The '*' in the DD part of the date is like a wildcard. It means that the DD part of the rule will match any number. In other words, if today's date is November DD, 2010, then this rule will match, for all values of DD. Note that the '+' is missing here. That's ok. It's optional, and if missing, the system will assume that you meant to put in a '+'.</p>
+
+<h5>
+<a id="example-63---rejecting-days" class="anchor" href="#example-63---rejecting-days" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 6.3 - Rejecting days</h5>
+
+<p>If, on the other hand, you wanted this Families that use this calendar to run on all days in 2010 except all of November, you would use the '-' sign:</p>
+
+<pre><code># All_But_Nov2010
+
+ + 2010/*/*
+ - 2010/11/*
+</code></pre>
+
+<p>The first line matches all days in 2010. The MM and DD parts are both wildcards. The optional plus tells the system that if the date matches this pattern, it should count as a valid run date. The next line, on the other, hand adds an exception to this rule: If the date falls within November 2010, the date should not be a valid run date - note the '-' sign that tells the system to exclude this date.</p>
+
+<h5>
+<a id="example-64---daily-calendar" class="anchor" href="#example-64---daily-calendar" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 6.4 - Daily Calendar</h5>
+
+<p>To specify a daily calendar, use this:</p>
+
+<pre><code># Daily
+
+*/*/*
+</code></pre>
+
+<p>Of course, you don't have to name the calendar 'Daily.' You can name it whatever you want. Using this calendar is equivalent to having <code>days=&gt;'Mon,Tue,Wed,Thu,Fri,Sat,Sun'</code> in the Family file.</p>
+
+<h5>
+<a id="example-65---specifying-days-of-the-week" class="anchor" href="#example-65---specifying-days-of-the-week" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 6.5 - Specifying days of the week</h5>
+
+<p>You can also specify rules that specify days of the week with a qualifier. For example, to run a job on the first Monday of every month in 2009, you should use a rule like this:</p>
+
+<pre><code># FirstMon09
+
++ first Mon 2009/*
+</code></pre>
+
+<p>A couple of points to mention here: First, the '+' is optional here as well. Second, the date part of the rule only has the year and the month (in YYYY/MM format). When you use a qualifier like 'first,' it makes no sense to say things like 'The first Monday of the 1st of every month.'</p>
+
+<p>The word 'first' in line 2 above is called a qualifier. Valid qualifiers are:</p>
+
+<ul>
+<li>first</li>
+<li>second</li>
+<li>third</li>
+<li>fourth</li>
+<li>fifth</li>
+<li>last</li>
+<li>second last</li>
+<li>third last</li>
+<li>fourth last</li>
+<li>every</li>
+</ul>
+
+<p>The qualifiers 'first last,', 'last last' and 'every last' also work in version 1.25, but they may stop working in a future version, so don't get into the habit of using those qualifiers.</p>
+
+<p>Unlike the 'days' specifier in the family file, the days of the week in calendar rules may be spelled out. Only the first 3 characters are significant.</p>
+
+<h5>
+<a id="calendar-recipes" class="anchor" href="#calendar-recipes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Calendar Recipes</h5>
+
+<p>The following 'recipes' show you some useful calendar rules:</p>
+
+<pre><code># ############################################################
+# Run every day
+#
++ */*/*
+</code></pre>
+
+<pre><code># ############################################################
+# Run on weekdays only
+#
+*/*/*
+- every Saturday */*
+- every Sunday */*
+
+# You could also replace the 3 lines above
+# with 5 '+' lines, one for each weekday.
+</code></pre>
+
+<pre><code># ############################################################
+# 'Thanksgiving Day' observed in the U.S.
+#
+fourth Thursday */11
+</code></pre>
+
+<pre><code># ############################################################
+# 'Thanksgiving Day' observed in Canada
+#
+second Monday */10
+</code></pre>
+
+<pre><code># ############################################################
+# 'Memorial Day' observed in the U.S.
+#
+last Monday */5
+</code></pre>
+
+<pre><code># ############################################################
+# The day Daylight Saving Time starts in the U.S.
+#
+second Sun */03  # this rule is valid for dates
+                 # after 2007, but not earlier
+</code></pre>
+
+<pre><code># ############################################################
+# The day Daylight Saving Time ends in the U.S.
+#
+first Sun */11   # this rule is valid for dates
+                 # after 2007, but not earlier
+</code></pre>
+
+<pre><code># ############################################################
+# The day Daylight Saving Time starts in Europe
+#
+last Sun */03    # tested for 2009
+</code></pre>
+
+<pre><code># ############################################################
+# The day Daylight Saving Time ends in Europe
+#
+last Sun */10    # tested for 2009
+</code></pre>
+
+<h4>
+<a id="example-7---automatic-retries" class="anchor" href="#example-7---automatic-retries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>EXAMPLE 7 - Automatic Retries</h4>
+
+<p>TaskForest can be configured so that when a job fails, it will automatically retry running the job. There is a system-wide option called <a href="#num_retries">num_retries</a> that specifies how many times the job will be retried. The <a href="#retry_sleep">retry_sleep</a> option specifies how many seconds the system will wait before trying to rerun the job.</p>
+
+<p>The <a href="#num_retries">num_retries</a> and [retry_sleep][] options may optionally be specified for each job as well. For example, if the configuration file contains this...</p>
+
+<pre><code># This is the number of times to automatically
+# retry running a job that fails 
+[num_retries](num_retries)              = 1
+
+# Wait these many seconds before automatically
+# retrying running a job that fails 
+retry_sleep              = 300
+</code></pre>
+
+<p>[retry_sleep] #calendar</p>
       </section>
     </div>
 
