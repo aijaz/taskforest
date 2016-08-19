@@ -780,22 +780,21 @@ instructions_dir         = "instructions"
 
 <p>Then there are the following three settings that control who receives the emails. They can be set system-wide in the configuration file:</p>
 
-<pre><code># When a job fails, emails are sent to this address
-email                    = "test@example.com"
+<div class="highlight highlight-source-python"><pre><span class="pl-c"># When a job fails, emails are sent to this address</span>
+email                    <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>test@example.com<span class="pl-pds">"</span></span>
 
-# When a job fails, but is being automatically retried,
-# emails are sent to this address, as opposed to the 
-# one stored in the 'email' setting.  If no_retry_mail 
-# is set, then no email will be sent in this case
-retry_email              = "test2@example.com"
+<span class="pl-c"># When a job fails, but is being automatically retried,</span>
+<span class="pl-c"># emails are sent to this address, as opposed to the </span>
+<span class="pl-c"># one stored in the 'email' setting.  If no_retry_mail </span>
+<span class="pl-c"># is set, then no email will be sent in this case</span>
+retry_email              <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>test2@example.com<span class="pl-pds">"</span></span>
 
-# When a job fails, is automatically retried one or more 
-# times and then suceededs, emails are sent to this 
-# address, as opposed to any of the others.  If 
-# no_retry_success_email is set, then no email will be sent
-# in this case.
-[retry_success_email][]      = "test3@example.com"
-</code></pre>
+<span class="pl-c"># When a job fails, is automatically retried one or more </span>
+<span class="pl-c"># times and then suceededs, emails are sent to this </span>
+<span class="pl-c"># address, as opposed to any of the others.  If </span>
+<span class="pl-c"># no_retry_success_email is set, then no email will be sent</span>
+<span class="pl-c"># in this case.</span>
+[retry_success_email][]      <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>test3@example.com<span class="pl-pds">"</span></span></pre></div>
 
 <p>Given the setup shown above, the email generated when a job is being retried is shown below. What you see below is a transcript of a SMTP session between TaskForest and a fake SMTP server used for testing. Lines that start with 'S: &gt;' denote text sent from the SMTP server to the client (TaskForest). Lines that start with 'C: &lt;' denote text sent from the SMTP client (TaskForest) to the SMTP server.</p>
 
