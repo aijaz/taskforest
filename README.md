@@ -777,13 +777,13 @@ C: < QUIT
 TaskForest also supports use of the [Mailgun][] email service. 
 
 ```
-# This is your Mailgun API key</span>
+# This is your Mailgun API key
 mailgun_api_key                = "key-XXXXX"
 
 # This is your mailgun domain name
 mailgun_domain                  = "example.com"
 
-# Please be advised: when using Mailgun, the following</span>
+# Please be advised: when using Mailgun, the following
 # variables are NOT used: 
 # * mail_reply_to
 # * mail_return_path
@@ -1093,7 +1093,6 @@ The 'taskforest' and 'status' commands accept a ``--config_file=f'' option. You 
 log_dir          = "t/logs"
 family_dir       = "/usr/local/taskforest/families"
 job_dir          = "/usr/local/taskforest/jobs"
-instructions_dir = "/usr/local/taskforest/instructions"
 run_wrapper      = "/usr/local/bin/run_with_log"
 
 
@@ -1197,16 +1196,20 @@ mail_reply_to            = "user2@example.com"
 # receiving Mail Transfer Agent).
 mail_return_path         = "user3@example.com"
 
-# This is the directory that stores the contents of
-# the emails that are sent by the system. 
-instructions_dir         = "instructions"
+# If you want to use the Mailgun service instead of SMTP 
+# to send emails out, for example, when a job fails
+# this will be your Mailgun API key
+mailgun_api_key         = "key-XXXXX"
+
+# And this will be domain corresponding to tha mailgun domain 
+mailgun_domain          = "example.com"
 
 # When a job fails, emails are sent to this address
 email                    = "test@example.com"
 
 # When a job fails, but is being automatically retried,
 # emails are sent to this address, as opposed to the 
-# one stored in the 'email' setting.  If no_retry_mail 
+# one stored in the 'email' setting.  If no_retry_email 
 # is set, then no email will be sent in this case
 retry_email              = "test2@example.com"
 
@@ -1225,4 +1228,43 @@ no_retry_email           = 0
 # when a job fails, was automatically retried one or more 
 # times and then finally succeeded.
 no_retry_success_email   = 0
+
+# This is the directory that stores the contents of
+# the emails and SMS texts that are sent by the system. 
+instructions_dir         = "instructions"
+
+# Your Twilio Account SID
+twilio_account_sid      = "ACXXXX"
+
+# Your Twilio Auth Token
+twilio_auth_token      = "abcdefg"
+
+# Your Twilio Phone Number
+twilio_phone_number    = "+13125551212"
+
+# When a job fails, SMS texts are sent to this phone number
+phone                  = "+13125551212"
+
+# When a job fails, but is being automatically retried,
+# SMS are sent to this address, as opposed to the
+# one stored in the 'phone' setting. If no_retry_phone
+# is set, then no SMS will be sent in this case
+retry_phone = "+13125551213"
+
+# When a job fails, is automatically retried one or more 
+# times and then suceeds, SMS are sent to this 
+# address, as opposed to any of the others.  If 
+# no_retry_success_phone is set, then no SMS will be sent
+# in this case.
+retry_success_phone      = "+13125551214"
+
+# If this is set to 1, then an SMS will not be sent 
+# when a job fails and is being automatically retried.
+no_retry_phone           = 0
+
+# If this is set to 1, then an SMS will not be sent 
+# when a job fails, was automatically retried one or more 
+# times and then finally succeeded.
+no_retry_success_phone   = 0
+
 ```
