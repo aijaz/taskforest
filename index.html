@@ -839,6 +839,222 @@ C: &lt; QUIT
 </code></pre>
 
 <p>TaskForest also supports use of the [Mailgun][] email service. </p>
+
+<pre><code># This is your Mailgun API key&lt;/span&gt;
+mailgun_api_key                = "key-XXXXX"
+
+# This is your mailgun domain name
+mailgun_domain                  = "example.com"
+
+# Please be advised: when using Mailgun, the following&lt;/span&gt;
+# variables are NOT used: 
+# * mail_reply_to
+# * mail_return_path
+
+# If mailgun_api_key is specified, then
+# mail will only be sent via Mailgun, and not over SMTP.
+</code></pre>
+
+<p>TaskForest also supports use of the <a href="https://twilio.com">Mailgun</a> SMS service: </p>
+
+<pre><code># This is your Twilio Account SID
+twilio_account_sid                = "ACXXXX"
+
+# This is your Twilio Auth Token
+twilio_auth_token                  = "abcdefj"
+
+# This is your Twilio Phone number
+#twilio_phone_number                  = "+13125551212"
+</code></pre>
+
+<p>What's left to be explained is how TaskForest chose the subject and the body of the email or text. The subject of the email will contain the Family name and Job name preceded by 'RETRY', 'FAIL' or 'RETRY_SUCCESS', depending on whether the job failed and is about to be retried (after the sleep time), or failed for the final time, or succeeded after failing and being retried one or more times.</p>
+
+<p>As for the body, TaskForest concatenates the contents of several files found in instructions_dir. If the appropriate file does not exist, it will ignore it and move on to the next one. As it retrieves the contents of each file, TaskForest does some simple substitutions to replace placeholders found within the file's contents with the the value of that variable in the run_wrapper's environment. TaskForest makes all of the environment variables available to the taskforest program available to the run wrapper (run_with_log) and also adds the following variables to the environment:</p>
+
+<ul>
+<li>
+<strong>TASKFOREST_FAMILY_NAME</strong> - This is the name of the family in which this job was run.</li>
+<li>
+<strong>TASKFOREST_JOB_NAME</strong> - This is the name of the job that was run.</li>
+<li>
+<strong>TASKFOREST_LOG_DIR</strong> - This is the full path of the TaskForest log directory</li>
+<li>
+<strong>TASKFOREST_JOB_DIR</strong> - This is the full path of the TaskForest job directory</li>
+<li>
+<strong>TASKFOREST_PID_FILE</strong> - This is the name of the pid file that's used internally by TaskForest</li>
+<li>
+<strong>TASKFOREST_SUCCESS_FILE</strong> - This is the name of the file that's created if the job succeeded.</li>
+<li>
+<strong>TASKFOREST_FAILURE_FILE</strong> - This is the name of the file that's created if the job failed.</li>
+<li>
+<strong>TASKFOREST_UNIQUE_ID</strong> - This is an internal identifier used by TaskForest to refer to the job.</li>
+<li>
+<strong>TASKFOREST_NUM_RETRIES</strong> - This is the value of the num_retries configuration variable.</li>
+<li>
+<strong>TASKFOREST_RETRY_SLEEP</strong> - This is the value of the retry_sleep configuration variable.</li>
+<li>
+<strong>TASKFOREST_EMAIL</strong> - This is the value of the email configuration variable.</li>
+<li>
+<strong>TASKFOREST_RETRY_EMAIL</strong> - This is the value of the retry_email configuration variable.</li>
+<li>
+<strong>TASKFOREST_NO_RETRY_EMAIL</strong> - This is the value of the no_retry_email configuration variable.</li>
+<li>
+<strong>TASKFOREST_INSTRUCTIONS_DIR</strong> - This is the value of the instructions_dir configuration variable.</li>
+<li>
+<strong>TASKFOREST_MAILGUN_API_KEY</strong> - This is the value of the mailgun_api_key configuration variable.</li>
+<li>
+<strong>TASKFOREST_MAILGUN_API_KEY</strong> - This is the value of the mailgun_domain configuration variable.</li>
+<li>
+<strong>TASKFOREST_SMTP_SERVER</strong> - This is the value of the smtp_server configuration variable.</li>
+<li>
+<strong>TASKFOREST_SMTP_PORT</strong> - This is the value of the smtp_port configuration variable.</li>
+<li>
+<strong>TASKFOREST_SMTP_SENDER</strong> - This is the value of the smtp_sender configuration variable.</li>
+<li>
+<strong>TASKFOREST_MAIL_FROM</strong> - This is the value of the mail_from configuration variable.</li>
+<li>
+<strong>TASKFOREST_MAIL_REPLY_TO</strong> - This is the value of the mail_reply_to configuration variable.</li>
+<li>
+<strong>TASKFOREST_MAIL_RETURN_PATH</strong> - This is the value of the mail_return_path configuration variable.</li>
+<li>
+<strong>TASKFOREST_SMTP_TIMEOUT</strong> - This is the value of the smtp_timeout configuration variable.</li>
+<li>
+<strong>TASKFOREST_RETRY_SUCCESS_EMAIL</strong> - This is the value of the retry_success_email configuration variable.</li>
+<li>
+<strong>TASKFOREST_NO_RETRY_SUCCESS_EMAIL</strong> - This is the value of the no_retry_success_email configuration variable.</li>
+<li>
+<strong>TASKFOREST_TWILIO_ACCOUNT_SID</strong> - This is the value of the twilio_account_sid configuration variable.</li>
+<li>
+<strong>TASKFOREST_TWILIO_AUTH_TOKEN</strong> - This is the value of the twilio_auth_token configuration variable.</li>
+<li>
+<strong>TASKFOREST_TWILIO_PHONE_NUMBER</strong> - This is the value of the twilio_phone_number configuration variable.</li>
+</ul>
+
+<p>Let <code>$instructions_dir</code> refer to the value of the <code>instructions_dir</code> option. Let's call the reason for the email <code>$reason</code>. It's value is one of <code>retry</code>, <code>fail</code>, or <code>retry_success</code> (as described above). Let's also refer to the job name as <code>$job_name</code>, and the family name as <code>$family_name</code>. TaskForest will look for the following files in the following order, inserting their contents into the <strong>email</strong> body.</p>
+
+<h4>
+<a id="instructions_dirheader" class="anchor" href="#instructions_dirheader" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/HEADER</code>
+</h4>
+
+<p>This is a header that will show up in every email. In the example that generated the above email, the contents of this file were:</p>
+
+<pre><code>This is the TaskForest system at $HOSTNAME
+------------------------------------------------------
+</code></pre>
+
+<h4>
+<a id="instructions_dirheaderreason" class="anchor" href="#instructions_dirheaderreason" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/HEADER.$reason</code>
+</h4>
+
+<p>This is a header that will be displayed just for that reason. In other words, it will be one of three files: HEADER.retry, HEADER.fail, and HEADER.retry_success. In the example that generated the above email, the name of this file was HEADER.retry and it's contents were:</p>
+
+<pre><code>The following job failed and will be rerun automatically.
+
+Family:         $TASKFOREST_FAMILY_NAME
+Job:            $TASKFOREST_JOB_NAME
+Exit Code:      $TASKFOREST_RC
+Retry After:    $TASKFOREST_RETRY_SLEEP seconds
+No. of Retries: $TASKFOREST_RETRY of $TASKFOREST_NUM_RETRIES
+</code></pre>
+
+<h4>
+<a id="instructions_dirfamilyfamily_namereason" class="anchor" href="#instructions_dirfamilyfamily_namereason" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/FAMILY.$family_name.$reason</code>
+</h4>
+
+<p>This is file that can contain specific instructions for that family and reason. In the example that generated the above email, the name of this file was <code>FAMILY.RETRY.retry</code> and its contents were:</p>
+
+<pre><code>Instructions that apply to all jobs in the Family named RETRY.
+</code></pre>
+
+<h4>
+<a id="instructions_dirjobjob_namereason" class="anchor" href="#instructions_dirjobjob_namereason" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/JOB.$job_name.$reason</code>
+</h4>
+
+<p>This is file that can contain specific instructions for that job and reason. In the example that generated the above email, the name of this file was <code>JOB.J_Retry.retry</code> and its contents were:</p>
+
+<pre><code>Instructions that apply to the jobs named J_Retry.
+</code></pre>
+
+<h4>
+<a id="instructions_dirfooterreason" class="anchor" href="#instructions_dirfooterreason" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/FOOTER.$reason</code>
+</h4>
+
+<p>This is a footer that will be displayed just for that reason. In other words, it will be one of three files: FOOTER.retry, FOOTER.fail, and FOOTER.retry_success. In the example that generated the above email, the name of this file would have been FOOTER.retry, but that file did not exist, so TaskForest skipped over it.</p>
+
+<h4>
+<a id="instructions_dirfooter" class="anchor" href="#instructions_dirfooter" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/FOOTER</code>
+</h4>
+
+<p>This is a footer that will show up in every email. In the example that generated the above email, the contents of this file were:</p>
+
+<pre><code>------------------------------------------------------------
+For help, please see http://www.taskforest.com/
+</code></pre>
+
+<h4>
+<a id="sms-text-messages" class="anchor" href="#sms-text-messages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SMS Text Messages</h4>
+
+<p>TaskForest will look for the following files in the following order, inserting their contents into the <strong>SMS text</strong> body.</p>
+
+<h4>
+<a id="instructions_dirsms_header" class="anchor" href="#instructions_dirsms_header" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/SMS_HEADER</code>
+</h4>
+
+<p>This is a header that will show up in every SMS text.</p>
+
+<h4>
+<a id="instructions_dirsms_headerreason" class="anchor" href="#instructions_dirsms_headerreason" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/SMS_HEADER.$reason</code>
+</h4>
+
+<p>This is a header that will be displayed just for that reason. In other words, it will be one of three files: SMS_HEADER.retry, SMS_HEADER.fail, and SMS_HEADER.retry_success. </p>
+
+<h4>
+<a id="instructions_dirsms_familyfamily_namereason" class="anchor" href="#instructions_dirsms_familyfamily_namereason" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/SMS_FAMILY.$family_name.$reason</code>
+</h4>
+
+<p>This is file that can contain specific instructions for that family and reason. </p>
+
+<h4>
+<a id="instructions_dirsms_jobjob_namereason" class="anchor" href="#instructions_dirsms_jobjob_namereason" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/SMS_JOB.$job_name.$reason</code>
+</h4>
+
+<p>This is file that can contain specific instructions for that job and reason. </p>
+
+<h4>
+<a id="instructions_dirsms_footerreason" class="anchor" href="#instructions_dirsms_footerreason" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/SMS_FOOTER.$reason</code>
+</h4>
+
+<p>This is a footer that will be displayed just for that reason. In other words, it will be one of three files: SMS_FOOTER.retry, SMS_FOOTER.fail, and SMS_FOOTER.retry_success. </p>
+
+<h4>
+<a id="instructions_dirsms_footer" class="anchor" href="#instructions_dirsms_footer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>$instructions_dir/SMS_FOOTER</code>
+</h4>
+
+<p>This is a footer that will show up in every email. </p>
+
+<h2>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h2>
+
+<p>The following options are required. If they are not specified on the command line, the environment will be searched for corresponding environment variables or look for them in the configuration file. I recommend that you specify all options in the configuration file.</p>
+
+<p><strong>--run_wrapper=/a/b/r [or environment variable TF_RUN_WRAPPER]</strong> - 
+This is the location of the run wrapper that is used to execute the job files. The run wrapper is also responsible for creating the semaphore files that denote whether a job ran successfully or not. The system comes with two run wrappers: bin/run and bin/run_with_log</p>
+
+<p>The first provides the most basic functionality, while the second also captures the stdout and stderr from the invoked job and saves it to a file in the log directory. You may use either run wrapper. If you need additional functionality, you can create your own run wrapper, as long as it preserves the functionality of the default run_wrapper.</p>
+
+<p><strong>You are encouraged to use run_with_log</strong> because of the extra functionality available to you. If you also use the included web server to look at the status of today's job, or to browser the logs from earlier days, clicking on a the status of a job that's already run will bring up the log file associated with that job. This is very convenient if you're trying to investigate a job failure.</p>
+
+<p><strong>--log_dir=/a/b/l [or environment variable TF_LOG_DIR]</strong> - 
+This is called the root log directory. Every day a dated directory named in the form YYYYMMDD will be created and the semaphore files will be created in that directory.</p>
+
+<p><strong>--job_dir=/a/b/j [or environment variable TF_JOB_DIR]</strong> - 
+This is the location of all the job files. Each job file should be an executable file (e.g.: a binary file, a shell script, a perl or python script). The file names are used as job names in the family configuration files. Job names may only contain the characters a-z, A-Z, 0-9 and _. You may create aliases to jobs within this directory.</p>
+
+<p>If a job J1 is present in a family config file, any other occurrance of J1 in that family refers TO THAT SAME JOB INSTANCE. It does not mean that the job will be run twice.</p>
+
+<p>If you want the same job running twice, you will have to put it in different families, or make soft links to it and have the soft link(s) in the family file along with the actual file name.</p>
+
+<p>If a job is to run repeatedly every x minutes, you could specify that using the 'repeat/every' syntax shown above.</p>
       </section>
     </div>
 
