@@ -223,18 +223,18 @@ make install
 
 <p>All settings (required and optional) may be specified in a variety of ways: command line, environment variable and config file. The order of preferences is this: Most options have default values. Settings specified in the config file override those defaults. Settings specified in environment variables take override those specified in the config file and the default values. Setting specified on the command line override those specified in envrionment variables, and those specified in the config files and the default values.</p>
 
-<p>The names of the environment variable are the same as the names of the settings on the command line (or in the config file), but they should be in UPPER CASE, with <code>TF_</code> prepended. For example, the environment variable name for the <a href="#run_wrapper"><code>run_wrapper</code></a> setting is <code>TF_RUN_WRAPPER</code>.</p>
+<p>The names of the environment variable are the same as the names of the settings on the command line (or in the config file), but they should be in UPPER CASE, with <code>TF_</code> prepended. For example, the environment variable name for the [run_wrapper][] setting is <code>TF_RUN_WRAPPER</code>.</p>
 
 <h2>
-<a id="jobs--families" class="anchor" href="#jobs--families" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Jobs &amp; Families</h2>
+<a id="jobs" class="anchor" href="#jobs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Jobs</h2>
 
 <p>A job is defined as any executable program that resides on the file system. It is represented as a file in the files system whose name is the same as the job name. Jobs can depend on each other. Jobs can also have start times before which a job may not by run.</p>
 
-<p>When a job is run by the run wrapper (<code>bin/run_with_log</code>), two status semaphore files are created in the <a href="#log_directory">log directory</a>. The first is created when a job starts and has a name of <code>$FamilyName.$JobName.pid</code>. This file contains some attributes of the job. When the job completes, more attributes are written to this file.</p>
+<p>When a job is run by the run wrapper (<code>bin/run_with_log</code>), two status semaphore files are created in the [log directory][]. The first is created when a job starts and has a name of <code>$FamilyName.$JobName.pid</code>. This file contains some attributes of the job. When the job completes, more attributes are written to this file.</p>
 
-<p>When the job completes, another semaphore file is written to the <a href="#log_directory">log directory</a>. The name of this file will be <code>$FamilyName.$JobName.0</code> if the job ran successfully, and <code>$FamilyName.$JobName.1</code> if the job failed. In either case, the file will contain the exit code of the job (0 in the case of success and non-zero otherwise).</p>
+<p>When the job completes, another semaphore file is written to the [log directory][]. The name of this file will be <code>$FamilyName.$JobName.0</code> if the job ran successfully, and <code>$FamilyName.$JobName.1</code> if the job failed. In either case, the file will contain the exit code of the job (0 in the case of success and non-zero otherwise).</p>
 
-<p>When a job is run by the <code>run_with_log</code> run wrapper, any output the job sends to stdout or stderr will be captured and stored in a file called <code>$FamilyName.$JobName.$pid.$start_time.stdout</code> in the <a href="#log_directory">log directory</a>.</p>
+<p>When a job is run by the <code>run_with_log</code> run wrapper, any output the job sends to stdout or stderr will be captured and stored in a file called <code>$FamilyName.$JobName.$pid.$start_time.stdout</code> in the [log directory][].</p>
 
 <h2>
 <a id="job-status" class="anchor" href="#job-status" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Job Status</h2>
@@ -245,7 +245,7 @@ make install
 <li>
 <strong>Waiting</strong> - One or more dependencies of the job have not been met.</li>
 <li>
-<strong>Ready</strong> - All dependencies have been met; the job will run during the next iteration of the <a href="#main_loop">taskforest main loop</a>.</li>
+<strong>Ready</strong> - All dependencies have been met; the job will run during the next iteration of the taskforest [main loop][].</li>
 <li>
 <strong>Running</strong> - The job is currently running</li>
 <li>
@@ -255,11 +255,11 @@ make install
 </ul>
 
 <h2>
-<a id="jobs--families-1" class="anchor" href="#jobs--families-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Jobs &amp; Families</h2>
+<a id="families" class="anchor" href="#families" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Families</h2>
 
 <p>Jobs can be grouped together into <strong>families</strong>. A family has a start time associated with it before which none of its jobs may run. A family also has a either (a) a list of days-of-the-week or (b) a calendar associated with it. Jobs within a family may only run on the days specified by the days-of-the-week or the calendar.</p>
 
-<p>Jobs and families are given simple names. A family is described in a family file whose name is the family name. Each family file is a text file that contains 1 or more job names. The layout of the job names within a family file determine the dependencies between the jobs (if any). There are <a href="#text_files">several reasons why text files are a good choice for Family files</a>.</p>
+<p>Jobs and families are given simple names. A family is described in a family file whose name is the family name. Each family file is a text file that contains 1 or more job names. The layout of the job names within a family file determine the dependencies between the jobs (if any). There are [several reasons why text files are a good choice for Family files][].</p>
 
 <p>Family names and job names should contain only the following characters:
 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_</p>
@@ -312,7 +312,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_</p>
 <li>Blank lines are ignored.</li>
 <li>A hash (#) and anything after it, until the end of the line is treated as a comment and ignored.</li>
 <li>Job and family names do not have to start with J_ or be in upper case.</li>
-<li>Instead of specifying days of the week on which this Family may run, this Family specifies a calendar to which it adheres. The calendar used in this case is called 'Weekdays.' For a detailed description of calendars, please see the <a href="#calendars">Calendars documentation</a>.</li>
+<li>Instead of specifying days of the week on which this Family may run, this Family specifies a calendar to which it adheres. The calendar used in this case is called 'Weekdays.' For a detailed description of calendars, please see the [calendars][] documentation.</li>
 </ul>
 
 <p>It is possible to have a dependency on a job that's in another family. If, for example, J_ROTATE_LOGS was in the Family named LOGS, then the family above would look like this:</p>
@@ -461,8 +461,8 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_</p>
 
 <p>We've moved the external dependency to the first line of it's own section. Now J_EMAIL_WEB_RPT_DONE relies on all 3 jobs, 2 that run in this Family, and one from the REPORTS family.</p>
 
-<h4>
-<a id="example-5---tokens" class="anchor" href="#example-5---tokens" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>EXAMPLE 5 - Tokens</h4>
+<h2>
+<a id="tokens" class="anchor" href="#tokens" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tokens</h2>
 
 <p>A token is a dependency. It is something that a job must 'possess' before it can run, if that job needs that token. You can create different types of tokens, giving each type a common name. You can also specify how many instances of tokens of each type are to exist. For example, if the configuration file contained the following lines:</p>
 
@@ -501,8 +501,8 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_</p>
 
 <p>Finally, tokens can also be used to control the load on the machine on which taskforest is running. If you've got several independent jobs that don't depend on each other, but which use a fair amount of resources, you can have all the jobs use the same token. Then you can tweak the maximum number of instances of that token to a value that maximizes the number of simultaneous jobs without putting too much strain on the server.</p>
 
-<h4>
-<a id="-example-6---calendars" class="anchor" href="#-example-6---calendars" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="calendars"></a> EXAMPLE 6 - Calendars</h4>
+<h2>
+<a id="-calendars" class="anchor" href="#-calendars" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="calendars"></a> Calendars</h2>
 
 <p>A calendar is a set of rules that defines on what days a job may run. The rules that make up a calendar are specified in the configuration file and the calendars themselves are associated with a Family in the Family file.</p>
 
@@ -513,22 +513,22 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-</p>
 
 <p>Let's see some examples. First, let's see how a Family file specifies a calendar:</p>
 
-<h5>
-<a id="example-61---one-day-only" class="anchor" href="#example-61---one-day-only" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 6.1 - One day only</h5>
+<h4>
+<a id="example-one-day-only" class="anchor" href="#example-one-day-only" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example: One day only</h4>
 
 <pre><code>start =&gt; '00:00', tz =&gt; 'GMT', calendar =&gt; 'NY2010'
 
  ...
 </code></pre>
 
-<p>You can see here that instead of the <code>days =&gt; '...'</code>, we have <code>calendar =&gt; 'NY2010'</code>. This tells the system that this family will rely on the calendar named <code>NY2010</code>. This calendar is defined in its own file. The file name should be the same as the calendar name. The directory in which the file exists is specified by the <a href="#calendar_dir">calendar_dir</a> option:</p>
+<p>You can see here that instead of the <code>days =&gt; '...'</code>, we have <code>calendar =&gt; 'NY2010'</code>. This tells the system that this family will rely on the calendar named <code>NY2010</code>. This calendar is defined in its own file. The file name should be the same as the calendar name. The directory in which the file exists is specified by the [calendar_dir][] option:</p>
 
 <pre><code>...
 calendar_dir = "/foo/bar/calendars"
 ...
 </code></pre>
 
-<p>The file /foo/bar/calendars/NY2010 looks like this (the # symbols and anything after them are comments, just like in the <a href="#configuration_file">configuration file</a>):</p>
+<p>The file /foo/bar/calendars/NY2010 looks like this (the # symbols and anything after them are comments, just like in the [configuration file][]):</p>
 
 <pre><code># NY2010
 + 2010/01/01  # Only valid on New Years Day, 2010
@@ -536,8 +536,8 @@ calendar_dir = "/foo/bar/calendars"
 
 <p>This calendar only has one rule. It is "+ 2010/01/01". The '+' in the rule says that if the date specified in this rule matches, then the Family must run on that day. The '+' is optional. This calendar will allow the Family that uses it to run on Jan 1, 2010, and on no other day. Dates in rules should be in the YYYY/MM/DD format.</p>
 
-<h5>
-<a id="example-622---one-month-only" class="anchor" href="#example-622---one-month-only" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 6.22 - One month only</h5>
+<h4>
+<a id="example-one-month-only" class="anchor" href="#example-one-month-only" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example: One month only</h4>
 
 <p>What if we want a job to run on every day in November 2010? You can use a rule like this:</p>
 
@@ -548,8 +548,8 @@ calendar_dir = "/foo/bar/calendars"
 
 <p>The '*' in the DD part of the date is like a wildcard. It means that the DD part of the rule will match any number. In other words, if today's date is November DD, 2010, then this rule will match, for all values of DD. Note that the '+' is missing here. That's ok. It's optional, and if missing, the system will assume that you meant to put in a '+'.</p>
 
-<h5>
-<a id="example-63---rejecting-days" class="anchor" href="#example-63---rejecting-days" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 6.3 - Rejecting days</h5>
+<h4>
+<a id="example-rejecting-days" class="anchor" href="#example-rejecting-days" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example: Rejecting days</h4>
 
 <p>If, on the other hand, you wanted this Families that use this calendar to run on all days in 2010 except all of November, you would use the '-' sign:</p>
 
@@ -561,8 +561,8 @@ calendar_dir = "/foo/bar/calendars"
 
 <p>The first line matches all days in 2010. The MM and DD parts are both wildcards. The optional plus tells the system that if the date matches this pattern, it should count as a valid run date. The next line, on the other, hand adds an exception to this rule: If the date falls within November 2010, the date should not be a valid run date - note the '-' sign that tells the system to exclude this date.</p>
 
-<h5>
-<a id="example-64---daily-calendar" class="anchor" href="#example-64---daily-calendar" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 6.4 - Daily Calendar</h5>
+<h4>
+<a id="example-daily-calendar" class="anchor" href="#example-daily-calendar" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example: Daily Calendar</h4>
 
 <p>To specify a daily calendar, use this:</p>
 
@@ -573,8 +573,8 @@ calendar_dir = "/foo/bar/calendars"
 
 <p>Of course, you don't have to name the calendar 'Daily.' You can name it whatever you want. Using this calendar is equivalent to having <code>days=&gt;'Mon,Tue,Wed,Thu,Fri,Sat,Sun'</code> in the Family file.</p>
 
-<h5>
-<a id="example-65---specifying-days-of-the-week" class="anchor" href="#example-65---specifying-days-of-the-week" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 6.5 - Specifying days of the week</h5>
+<h4>
+<a id="example-specifying-days-of-the-week" class="anchor" href="#example-specifying-days-of-the-week" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example: Specifying days of the week</h4>
 
 <p>You can also specify rules that specify days of the week with a qualifier. For example, to run a job on the first Monday of every month in 2009, you should use a rule like this:</p>
 
@@ -604,8 +604,8 @@ calendar_dir = "/foo/bar/calendars"
 
 <p>Unlike the 'days' specifier in the family file, the days of the week in calendar rules may be spelled out. Only the first 3 characters are significant.</p>
 
-<h5>
-<a id="calendar-recipes" class="anchor" href="#calendar-recipes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Calendar Recipes</h5>
+<h4>
+<a id="calendar-recipes" class="anchor" href="#calendar-recipes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Calendar Recipes</h4>
 
 <p>The following 'recipes' show you some useful calendar rules:</p>
 
@@ -670,12 +670,12 @@ last Sun */03    # tested for 2009
 last Sun */10    # tested for 2009
 </code></pre>
 
-<h4>
-<a id="example-7---automatic-retries" class="anchor" href="#example-7---automatic-retries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>EXAMPLE 7 - Automatic Retries</h4>
+<h2>
+<a id="automatic-retries" class="anchor" href="#automatic-retries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Automatic Retries</h2>
 
-<p>TaskForest can be configured so that when a job fails, it will automatically retry running the job. There is a system-wide option called <a href="#num_retries">num_retries</a> that specifies how many times the job will be retried. The <a href="#retry_sleep">retry_sleep</a> option specifies how many seconds the system will wait before trying to rerun the job.</p>
+<p>TaskForest can be configured so that when a job fails, it will automatically retry running the job. There is a system-wide option called [num_retries][] that specifies how many times the job will be retried. The [retry_sleep][] option specifies how many seconds the system will wait before trying to rerun the job.</p>
 
-<p>The <a href="#num_retries">num_retries</a> and <a href="#calendars">retry_sleep</a> options may optionally be specified for each job as well. For example, if the configuration file contains this...</p>
+<p>The [num_retries][] and [retry_sleep][] options may optionally be specified for each job as well. For example, if the configuration file contains this...</p>
 
 <pre><code># This is the number of times to automatically
 # retry running a job that fails 
@@ -684,6 +684,159 @@ last Sun */10    # tested for 2009
 # Wait these many seconds before automatically
 # retrying running a job that fails 
 retry_sleep              = 300
+</code></pre>
+
+<p>...then if any job fails, the run wrapper will sleep for 300 seconds and then retry the job once. If the retry fails as well, then the job will be considered to have failed. If the retry succeeds, then job will have considered to have run successfully. During 300 second sleep period, and during the retries, the official status of the job will still be 'Running.'</p>
+
+<p>The responsibility of implementing the auto-retries falls on the run wrapper. Even though TaskForest ships with two run wrappers, you really should use run_with_log and not run. When a job is being retried, run_with_log will note it the log file like this:</p>
+
+<pre><code>*****************************************************************
+Start Time:   Mon Mar 22 17:57:21 2010
+Family:       RETRY
+Job:          J_Retry
+Job File:     J_Retry
+Log Dir:      logs/20090503
+Script Dir:   jobs
+Pid File:     logs/20090503/RETRY.J_Retry.pid
+Success File: logs/20090503/RETRY.J_Retry.0
+Failure File: logs/20090503/RETRY.J_Retry.1
+Out/Err File: logs/20090503/RETRY.J_Retry.19258.1269298641.stdout
+
+*****************************************************************
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!! Current Time: Mon Mar 22 17:57:21 2010
+!! Exit Code:    256
+!! 
+!! Job failed.  Sleeping 2 seconds and then retrying (retry 1 of 1).
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+*****************************************************************
+Start Time: Mon Mar 22 17:57:21 2010
+End Time:   Mon Mar 22 17:57:23 2010
+Duration:   2 seconds
+Exit Code:  0
+*****************************************************************
+</code></pre>
+
+<p>You can see that in this case, TaskForest had been instructed to sleep for 2 seconds before retrying, and that there was to be only one retry.</p>
+
+<p>You can also override these configuration settings for individual jobs. Let's say you have your configuration file set up as shown above, with one retry after 300 seconds. Now suppose you want job J_Retry to be retried 10 times, with a two-minute sleep between retries. You could specify the overrides directly in the family file as follows:</p>
+
+<pre><code>...
+J_Retry (num_retries =&gt; 10, retry_sleep =&gt; 120)
+...
+</code></pre>
+
+<p>This local specification of ten retries spaced two minutes apart will override what you have specified in the configuration file. You can override these configuration options on as many jobs as you wish.</p>
+
+<h2>
+<a id="emails" class="anchor" href="#emails" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Emails</h2>
+
+<p>You can configure TaskForest to send you an email or SMS message (text) in any of these three situations:</p>
+
+<ul>
+<li>When a job fails</li>
+<li>When a job fails but will be automatically retried</li>
+<li>When a job that failed and was automatically retried finally succeeds</li>
+</ul>
+
+<p>You can configure this feature system-wide via the configuration file, and you can also override it for individual jobs in the Family files (the same way retries are configured). You can also completely configure the emails or texts going out in each of the three cases, from the SMTP envelope information to MIME headers to body text. Again, this can be configured across the entire system and overridden for individual jobs and families. It really is a very powerful system that, with the proper email filters, can make managing your job workflow very easy. Let's see how it works.</p>
+
+<p>In order to be able to send emails, you need to provide TaskForest some information in the configuration file:</p>
+
+<pre><code># This is the SMTP server that will be used to send 
+# emails out when a job fails, for example
+smtp_server              = "localhost"
+
+# The default SMTP port is 25.
+smtp_port                = 25
+
+# In a production environment this should be 60 or 120
+smtp_timeout             = 60
+
+# This is the SMTP envelope sender 
+# (the text after "MAIL FROM:")
+smtp_sender                = "user1@example.com"
+
+# This is the email address that appears in the From: 
+# mail header
+mail_from                = "user1@example.com"
+
+# If a user replies to a received email, the reply
+# will go to this address instead of the From: address. 
+# This address is set in the Reply-To mail header.
+mail_reply_to            = "user2@example.com"
+
+# This is the address to which bounces will be sent if 
+# they occur at the SMTP server (as opposed to the 
+# receiving Mail Transfer Agent).
+mail_return_path         = "user3@example.com"
+
+# This is the directory that stores the contents of
+# the emails that are sent by the system. 
+instructions_dir         = "instructions"
+</code></pre>
+
+<p>Then there are the following three settings that control who receives the emails. They can be set system-wide in the configuration file:</p>
+
+<pre><code># When a job fails, emails are sent to this address
+email                    = "test@example.com"
+
+# When a job fails, but is being automatically retried,
+# emails are sent to this address, as opposed to the 
+# one stored in the 'email' setting.  If no_retry_mail 
+# is set, then no email will be sent in this case
+retry_email              = "test2@example.com"
+
+# When a job fails, is automatically retried one or more 
+# times and then suceededs, emails are sent to this 
+# address, as opposed to any of the others.  If 
+# no_retry_success_email is set, then no email will be sent
+# in this case.
+[retry_success_email][]      = "test3@example.com"
+</code></pre>
+
+<p>Given the setup shown above, the email generated when a job is being retried is shown below. What you see below is a transcript of a SMTP session between TaskForest and a fake SMTP server used for testing. Lines that start with 'S: &gt;' denote text sent from the SMTP server to the client (TaskForest). Lines that start with 'C: &lt;' denote text sent from the SMTP client (TaskForest) to the SMTP server.</p>
+
+<pre><code>S: &gt; 200 OK TaskForest Fake SMTP Server
+C: &lt; EHLO user1@example.com
+S: &gt; 200 OK
+C: &lt; MAIL FROM:&lt;user1@example.com&gt;
+S: &gt; 200 OK
+C: &lt; RCPT TO:&lt;test2@example.com&gt;
+S: &gt; 200 OK
+C: &lt; DATA
+S: &gt; 200 OK
+C: &lt; From: user1@example.com
+C: &lt; Return-Path: user3@example.com
+C: &lt; Reply-To: user2@example.com
+C: &lt; To: test2@example.com
+C: &lt; Subject: RETRY RETRY::J_Retry
+C: &lt; 
+C: &lt; This is the TaskForest system at your_machine_name
+C: &lt; ------------------------------------------------------
+C: &lt; 
+C: &lt; 
+C: &lt; The following job failed and will be rerun automatically.
+C: &lt; 
+C: &lt; Family:         RETRY
+C: &lt; Job:            J_Retry
+C: &lt; Exit Code:      256
+C: &lt; Retry After:    2 seconds
+C: &lt; No. of Retries: 1 of 1 
+C: &lt; 
+C: &lt; Instructions that apply to all jobs in the Family named RETRY.
+C: &lt; 
+C: &lt; Instructions that apply to the jobs named J_Retry.
+C: &lt; 
+C: &lt; 
+C: &lt; 
+C: &lt; ------------------------------------------------------------
+C: &lt; For help, please see http://www.taskforest.com/
+C: &lt; .
+S: &gt; 200 OK
+C: &lt; QUIT
 </code></pre>
       </section>
     </div>
