@@ -158,3 +158,11 @@ status
 ```
 
 
+[DateTime]: http://search.cpan.org/search?mode=all&query=DateTime
+[Config::General]: http://search.cpan.org/search?mode=all&query=Config%3A%3AGeneral
+[Log::Log4perl]: http://search.cpan.org/search?mode=all&query=Log%3A%3ALog4perl
+[HTTP::Daemon]: http://search.cpan.org/search?mode=all&query=HTTP%3A%3ADaemon
+[HTTP::Status]: http://search.cpan.org/search?mode=all&query=HTTP%3A%3AStatus
+[HTTP::Response]: http://search.cpan.org/search?mode=all&query=HTTP%3A%3AResponse
+[HTTP::Request]: http://search.cpan.org/search?mode=all&query=HTTP%3A%3ARequest
+[Net::SMTP]: http://search.cpan.org/search?mode=all&query=Net%3A%3ASMTP
