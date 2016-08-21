@@ -48,15 +48,15 @@ Make sure you have the following Perl modules installed (available from [CPAN](h
 Fork or clone the repository. In the `master` branch enter: 
 
 ```
-perl Makefile.PL
-make
-make test # this will take a few minutes
-sudo make install
+$ perl Makefile.PL
+$ make
+$ make test # this will take a few minutes
+$ sudo make install
 
-mkdir /usr/local/taskforest
-mkdir /usr/local/taskforest/jobs
-mkdir /usr/local/taskforest/families
-mkdir /usr/local/taskforest/logs
+$ mkdir /usr/local/taskforest
+$ mkdir /usr/local/taskforest/jobs
+$ mkdir /usr/local/taskforest/families
+$ mkdir /usr/local/taskforest/logs
 ```
 
 ### 2. Create a Config File
@@ -153,8 +153,8 @@ In the above example, TaskForest will start every day at 00:05 (12:05 a.m.). By 
 To see the status of all jobs do the following: 
 
 ```
-export TF_LOG_DIR=/usr/local/taskforest/logs
-status
+$ export TF_LOG_DIR=/usr/local/taskforest/logs
+$ status
 ```
 
 ## Where to Go From Here
