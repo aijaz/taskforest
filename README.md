@@ -43,7 +43,7 @@ Make sure you have the following Perl modules installed (available from [CPAN](h
 - [HTTP::Request][] version 5.818 or higher
 - [Net::SMTP][] version 2.31 or higher
 
-### 1 Install TaskForest
+### 1. Install TaskForest
 
 Fork or clone the repository. In the `master` branch enter: 
 
@@ -59,7 +59,7 @@ mkdir /usr/local/taskforest/families
 mkdir /usr/local/taskforest/logs
 ```
 
-### 2 Create a Config File
+### 2. Create a Config File
 
 Save the following text into `/usr/local/taskforest/taskforest.cfg`:
 
@@ -70,7 +70,7 @@ job_dir     = "/usr/local/taskforest/jobs"
 run_wrapper = "/usr/local/bin/run_with_log"
 ```
 
-### 3 Create Job Files
+### 3. Create Job Files
 
 When TaskForest runs a job, it executes a Job File. A Job File is a script or executable file that has the 'execute' (*x*) bit set. Let's create some very simple job files: one that always completes successfully, and one that always fails:
 
@@ -92,7 +92,7 @@ cp ROTATE_LOGS SAVE_BACKUP_OFFSITE
 chmod a+x *
 ```
 
-### 4 Create Family Files
+### 4. Create Family Files
 
 Jobs are grouped into Families. A *Family* has a name, a start time, a time zone, and a list of days of the week when it may run (or a calendar, but you don't know about that, yet). Let's create a Family that starts at 9:00 a.m. Chicago time three days a week. Save the following text into '/usr/local/taskforest/families/WEEKDAYS':
 
@@ -138,7 +138,7 @@ Have a look at this file. There are a few things I want to tell you about it:
 - If BACKUP_DATABASE fails, SAVE_BACKUP_OFFSITE will not run
 - If SAVE_BACKUP_OFFSITE fails, it will be retried 10 additional times, with a 10 minute (600 second) wait between retries
 
-### 5 Schedule TaskForest to run every day
+### 5. Schedule TaskForest to run every day
 
 There are many ways to run TaskForest. The simplest is to start it every day at a fixed time using `cron`:
 
@@ -148,7 +148,7 @@ There are many ways to run TaskForest. The simplest is to start it every day at 
 
 In the above example, TaskForest will start every day at 00:05 (12:05 a.m.). By default, TaskForest stops running every day at 23:55 (11:55 p.m.).  
 
-### 6 Check Up on the Status of all the Jobs
+### 6. Check Up on the Status of all the Jobs
 
 To see the status of all jobs do the following: 
 
@@ -157,6 +157,9 @@ export TF_LOG_DIR=/usr/local/taskforest/logs
 status
 ```
 
+## Where to Go From Here
+
+Now that you know how to get started with TaskForest, you can browse the [TaskForest][] documentation.
 
 [DateTime]: http://search.cpan.org/search?mode=all&query=DateTime
 [Config::General]: http://search.cpan.org/search?mode=all&query=Config%3A%3AGeneral
@@ -166,3 +169,4 @@ status
 [HTTP::Response]: http://search.cpan.org/search?mode=all&query=HTTP%3A%3AResponse
 [HTTP::Request]: http://search.cpan.org/search?mode=all&query=HTTP%3A%3ARequest
 [Net::SMTP]: http://search.cpan.org/search?mode=all&query=Net%3A%3ASMTP
+[TaskForest]: http://taskforest.com
