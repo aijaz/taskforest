@@ -166,7 +166,7 @@ like($emails->[1]->{body}->[6],  qr/Family: +RETRY/,                            
 like($emails->[1]->{body}->[7],  qr/Job: +J_Retry/,                                                     "Msg 2 - Got correct job");
 like($emails->[1]->{body}->[9],  qr/No. of Retries: +1 of 1/,                                           "Msg 2 - Got correct num of retries");
 like($emails->[1]->{body}->[12], qr/\-+/,                                                               "Msg 2 - Got footer dashes");
-like($emails->[1]->{body}->[13], qr/For instructions on using TaskForest, please see http:\/\/www.taskforest.com\//,  "Msg 2 - Got footer");
+like($emails->[1]->{body}->[13], qr/For instructions on using TaskForest, please see http:\/\/www.taskforest.aijaz.net\//,  "Msg 2 - Got footer");
 
 
 

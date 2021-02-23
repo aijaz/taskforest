@@ -629,7 +629,7 @@ perl modules to a full-fledged system.  I have found that putting the
 documentation in a single POD is getting much more difficult.  You can
 now find the latest documetation on the TaskForest website located at
 
- http://www.taskforest.com
+ http://www.taskforest.aijaz.net
 
 If you run the included web server, you will also find a complete copy
 of the documentation on the included web site.
@@ -637,16 +637,16 @@ of the documentation on the included web site.
 =head1 BUGS
 
 For an up-to-date bug listing and to submit a bug report, please
-visit the TaskForest web site at http://taskforest.com/
+visit the TaskForest web site at http://taskforest.aijaz.net/
 
 =head1 SUPPORT
 
-For support, please visit our website at http://www.taskforest.com/ 
+For support, please visit our website at http://www.taskforest.aijaz.net/ 
 
 =head1 AUTHORS
 
 Aijaz A. Ansari
-http://www.taskforest.com/
+http://www.taskforest.aijaz.net/
 
 The following developers have graciously contributed patches to enhance TaskForest:
 

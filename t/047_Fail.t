@@ -121,7 +121,7 @@ like($emails->[0]->{body}->[4],  qr/The following job has failed\./,            
 like($emails->[0]->{body}->[6],  qr/Family: +FAIL/,                                                                   "Msg 1 - Got correct family");
 like($emails->[0]->{body}->[7],  qr/Job: +J_Fail/,                                                                    "Msg 1 - Got correct job");
 like($emails->[0]->{body}->[11], qr/\-+/,                                                                             "Msg 1 - Got footer dashes");
-like($emails->[0]->{body}->[12], qr/For instructions on using TaskForest, please see http:\/\/www.taskforest.com\//,  "Msg 1 - Got footer");
+like($emails->[0]->{body}->[12], qr/For instructions on using TaskForest, please see http:\/\/www.taskforest.aijaz.net\//,  "Msg 1 - Got footer");
 
 
 &TaskForest::Test::cleanup_files($log_dir);

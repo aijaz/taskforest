@@ -77,7 +77,7 @@ my $skip = 0;
         diag("");
         diag("perl -T -I lib ./blib/script/taskforestd --config_file=./taskforestd.test.cfg");
         diag("");
-        diag("For more help, see http://www.taskforest.com");
+        diag("For more help, see http://www.taskforest.aijaz.net");
         diag("");
         diag("**********************************************************************");
         diag("");

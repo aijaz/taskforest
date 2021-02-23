@@ -144,7 +144,7 @@ foreach my $index (0..2) {
     like($emails->[$index]->{body}->[9],  qr/Retry After: +2 seconds/,                                                        "Msg $n - Got correct sleep");
     like($emails->[$index]->{body}->[10], qr/No. of Retries: +$n of 3/,                                                        "Msg $n - Got correct num of retries");
     like($emails->[$index]->{body}->[13], qr/\-+/,                                                                            "Msg $n - Got footer dashes");
-    like($emails->[$index]->{body}->[14], qr/For instructions on using TaskForest, please see http:\/\/www.taskforest.com\//, "Msg $n - Got footer");
+    like($emails->[$index]->{body}->[14], qr/For instructions on using TaskForest, please see http:\/\/www.taskforest.aijaz.net\//, "Msg $n - Got footer");
 }
 
 
@@ -162,7 +162,7 @@ like($emails->[3]->{body}->[4],  qr/The following job has failed\./,            
 like($emails->[3]->{body}->[6],  qr/Family: +FAIL/,                                                                   "Msg 4 - Got correct family");
 like($emails->[3]->{body}->[7],  qr/Job: +J_Fail/,                                                                    "Msg 4 - Got correct job");
 like($emails->[3]->{body}->[11], qr/\-+/,                                                                             "Msg 4 - Got footer dashes");
-like($emails->[3]->{body}->[12], qr/For instructions on using TaskForest, please see http:\/\/www.taskforest.com\//,  "Msg 4 - Got footer");
+like($emails->[3]->{body}->[12], qr/For instructions on using TaskForest, please see http:\/\/www.taskforest.aijaz.net\//,  "Msg 4 - Got footer");
 
 
 
