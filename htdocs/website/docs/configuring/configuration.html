@@ -99,6 +99,15 @@
 <a class="config_file" href="/docs/configuring/options.html#retry_sleep">retry_sleep</a>              = 300
 
 
+<span class="comments"># If you want to use the Mailgun service instead of SMTP </span>
+<span class="comments"># to send emails out, for example, when a job fails</span>
+<span class="comments"># this will be your Mailgun API key</span>
+<a class="config_file" href="/docs/configuring/options.html#mailgun_api_key">mailgun_api_key</a>         = "key-XXXXX"
+
+<span class="comments"># And this will be domain corresponding to tha mailgun api key</span>
+<a class="config_file" href="/docs/configuring/options.html#mailgun_domain">mailgun_domain</a>          = "example.com"
+
+
 <span class="comments"># This is the SMTP server that will be used to send </span>
 <span class="comments"># emails out when a job fails, for example</span>
 <a class="config_file" href="/docs/configuring/options.html#smtp_server">smtp_server</a>              = "localhost"
@@ -128,7 +137,7 @@
 <a class="config_file" href="/docs/configuring/options.html#mail_return_path">mail_return_path</a>         = "user3@example.com"
 
 <span class="comments"># This is the directory that stores the contents of</span>
-<span class="comments"># the emails that are sent by the system. </span>
+<span class="comments"># the emails and SMS that are sent by the system. </span>
 <a class="config_file" href="/docs/configuring/options.html#instructions_dir">instructions_dir</a>         = "instructions"
 
 <span class="comments"># When a job fails, emails are sent to this address</span>
@@ -136,7 +145,7 @@
 
 <span class="comments"># When a job fails, but is being automatically retried,</span>
 <span class="comments"># emails are sent to this address, as opposed to the </span>
-<span class="comments"># one stored in the 'email' setting.  If no_retry_mail </span>
+<span class="comments"># one stored in the 'email' setting.  If no_retry_email </span>
 <span class="comments"># is set, then no email will be sent in this case</span>
 <a class="config_file" href="/docs/configuring/options.html#retry_email">retry_email</a>              = "test2@example.com"
 
@@ -155,6 +164,40 @@
 <span class="comments"># when a job fails, was automatically retried one or more </span>
 <span class="comments"># times and then finally succeeded.</span>
 <a class="config_file" href="/docs/configuring/options.html#no_retry_success_email">no_retry_success_email</a>   = 0
+
+<span class="comments"># Your Twilio Account SID</span>
+<a href="/docs/configuring/options.html/#twilio_account_sid" class="config_file">twilio_account_sid</a>      = "ACXXXX"
+
+<span class="comments"># Your Twilio Auth Code</span>
+<a href="/docs/configuring/options.html/#twilio_auth_token" class="config_file">twilio_auth_token</a>      = "abcdefg"
+
+<span class="comments"># Your Twilio Phone Number</span>
+<a href="/docs/configuring/options.html/#twilio_phone_number" class="config_file">twilio_phone_number</a>      = "+13125551212"
+
+<span class="comments"># When a job fails, SMS messages are sent to this phone number</span>
+<a class="config_file" href="/docs/configuring/options.html#phone">phone</a>                    = "+13125551213"
+
+<span class="comments"># When a job fails, but is being automatically retried,</span>
+<span class="comments"># SMS are sent to this address, as opposed to the </span>
+<span class="comments"># one stored in the 'phone' setting.  If no_retry_phone </span>
+<span class="comments"># is set, then no SMS will be sent in this case</span>
+<a class="config_file" href="/docs/configuring/options.html#retry_phone">retry_phone</a>              = "+13125551213"
+
+<span class="comments"># When a job fails, is automatically retried one or more </span>
+<span class="comments"># times and then suceeds, SMS are sent to this </span>
+<span class="comments"># address, as opposed to any of the others.  If </span>
+<span class="comments"># no_retry_success_phone is set, then no SMS will be sent</span>
+<span class="comments"># in this case.</span>
+<a class="config_file" href="/docs/configuring/options.html#retry_success_phone">retry_success_phone</a>      = "+13125551214"
+
+<span class="comments"># If this is set to 1, then an SMS will not be sent </span>
+<span class="comments"># when a job fails and is being automatically retried.</span>
+<a class="config_file" href="/docs/configuring/options.html#no_retry_phone">no_retry_phone</a>           = 0
+
+<span class="comments"># If this is set to 1, then an SMS will not be sent </span>
+<span class="comments"># when a job fails, was automatically retried one or more </span>
+<span class="comments"># times and then finally succeeded.</span>
+<a class="config_file" href="/docs/configuring/options.html#no_retry_success_phone">no_retry_success_phone</a>   = 0
 
   </code></pre></div>
 

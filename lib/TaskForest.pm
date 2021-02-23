@@ -637,14 +637,11 @@ of the documentation on the included web site.
 =head1 BUGS
 
 For an up-to-date bug listing and to submit a bug report, please
-send an email to the TaskForest Discussion Mailing List at
-"taskforest-discuss at lists dot sourceforge dot net"
+visit the TaskForest web site at http://taskforest.com/
 
 =head1 SUPPORT
 
-For support, please visit our website at http://www.taskforest.com/ or
-send an email to the TaskForest Discussion Mailing List at
-"taskforest-discuss at lists dot sourceforge dot net"
+For support, please visit our website at http://www.taskforest.com/ 
 
 =head1 AUTHORS
 
@@ -678,7 +675,7 @@ Many thanks to the following for their help and support:
 
 =item *
 
-SourceForge
+GitHub
 
 =item *
 

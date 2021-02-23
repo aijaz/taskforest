@@ -80,11 +80,13 @@ my %all_options = (
     log_file               => 's',
     err_file               => 's',
     log_status             => undef,
-    ignore_regex           => 's@',
+    ignore_regex           => 's',
     default_time_zone      => 's',
     date                   => 's',
     calendar_dir           => 's',
     instructions_dir       => 's',
+    mailgun_api_key        => 's',
+    mailgun_domain         => 's',
     smtp_server            => 's',
     smtp_port              => 's',
     smtp_sender            => 's',
@@ -98,6 +100,14 @@ my %all_options = (
     no_retry_email         => undef,
     retry_success_email    => 's',
     no_retry_success_email => undef,
+    twilio_account_sid     => 's',
+    twilio_auth_token      => 's',
+    twilio_phone_number    => 's',
+    phone                  => 's',
+    retry_phone            => 's',
+    no_retry_phone         => undef,
+    retry_success_phone    => 's',
+    no_retry_success_phone => undef,
 );
 
 # These are the required options. The absence of any one of these will
@@ -214,6 +224,8 @@ sub getOptions {
     $tainted_options->{default_time_zone}      = 'America/Chicago' unless defined $tainted_options->{default_time_zone};
     $tainted_options->{date}                   = ''                unless defined $tainted_options->{date};
     $tainted_options->{token}                  = {}                unless defined $tainted_options->{token};
+    $tainted_options->{mailgun_api_key}        = ''                unless defined $tainted_options->{mailgun_api_key};
+    $tainted_options->{mailgun_domain}         = ''                unless defined $tainted_options->{mailgun_domain};
     $tainted_options->{smtp_server}            = ''                unless defined $tainted_options->{smtp_server};
     $tainted_options->{smtp_port}              = 25                unless defined $tainted_options->{smtp_port};
     $tainted_options->{smtp_timeout}           = 60                unless defined $tainted_options->{smtp_timeout};
@@ -229,6 +241,14 @@ sub getOptions {
     $tainted_options->{no_retry_email}         = 0                 unless defined $tainted_options->{no_retry_email};
     $tainted_options->{retry_success_email}    = ''                unless defined $tainted_options->{retry_success_email};
     $tainted_options->{no_retry_success_email} = 0                 unless defined $tainted_options->{no_retry_success_email};
+    $tainted_options->{twilio_account_sid}     = ''                unless defined $tainted_options->{twilio_account_sid};
+    $tainted_options->{twilio_auth_token}       = ''                unless defined $tainted_options->{twilio_auth_token};
+    $tainted_options->{twilio_phone_number}    = ''                unless defined $tainted_options->{twilio_phone_number};
+    $tainted_options->{phone}                  = ''                unless defined $tainted_options->{phone};
+    $tainted_options->{retry_phone}            = ''                unless defined $tainted_options->{retry_phone};
+    $tainted_options->{no_retry_phone}         = 0                 unless defined $tainted_options->{no_retry_phone};
+    $tainted_options->{retry_success_phone}    = ''                unless defined $tainted_options->{retry_success_phone};
+    $tainted_options->{no_retry_success_phone} = 0                 unless defined $tainted_options->{no_retry_success_phone};
 
     # show help
     if ($tainted_options->{help}) {
@@ -319,6 +339,12 @@ sub getOptions {
     if ( ($tainted_options->{instructions_dir})) {
         if ($tainted_options->{instructions_dir} =~ m!^([a-z0-9/_:\\\.\-]*)!i) { $new_options->{instructions_dir} = $1; } else { croak "Bad instructions_dir"; }
     }
+    if ( ($tainted_options->{mailgun_api_key})) {
+        if ($tainted_options->{mailgun_api_key} =~ m!^([a-z0-9_\-\.]*)!i) { $new_options->{mailgun_api_key} = $1; } else { croak "Bad mailgun_api_key"; }
+    }
+    if ( ($tainted_options->{mailgun_domain})) {
+        if ($tainted_options->{mailgun_domain} =~ m!^([a-z0-9_\-\.]*)!i) { $new_options->{mailgun_domain} = $1; } else { croak "Bad mailgun_domain"; }
+    }
     if ( ($tainted_options->{smtp_server})) {
         if ($tainted_options->{smtp_server} =~ m!^([a-z0-9_\-\.]*)!i) { $new_options->{smtp_server} = $1; } else { croak "Bad smtp server"; }
     }
@@ -355,6 +381,27 @@ sub getOptions {
     }
     if ($tainted_options->{no_retry_success_email}) { $new_options->{no_retry_success_email} = 1; } else { $new_options->{no_retry_success_email} = 0; } 
 
+    if ( ($tainted_options->{phone})) {
+        if ($tainted_options->{phone} =~ m!^([0-9\+]*)!i) { $new_options->{phone} = $1; } else { croak "Bad phone"; }
+    }
+    if ( ($tainted_options->{retry_phone})) {
+        if ($tainted_options->{retry_phone} =~ m!^([0-9\+]*)!i) { $new_options->{retry_phone} = $1; } else { croak "Bad retry_phone"; }
+    }
+    if ($tainted_options->{no_retry_phone}) { $new_options->{no_retry_phone} = 1; } else { $new_options->{no_retry_phone} = 0; } 
+    if ( ($tainted_options->{retry_success_phone})) {
+        if ($tainted_options->{retry_success_phone} =~ m!^([0-9\+]*)!i) { $new_options->{retry_success_phone} = $1; } else { croak "Bad retry_success_phone"; }
+    }
+    if ($tainted_options->{no_retry_success_phone}) { $new_options->{no_retry_success_phone} = 1; } else { $new_options->{no_retry_success_phone} = 0; } 
+
+    if ( ($tainted_options->{twilio_account_sid})) {
+        if ($tainted_options->{twilio_account_sid} =~ m!^([a-z0-9]*)!i) { $new_options->{twilio_account_sid} = $1; } else { croak "Bad twilio_account_sid"; }
+    }
+    if ( ($tainted_options->{twilio_phone_number})) {
+        if ($tainted_options->{twilio_phone_number} =~ m!^([a-z0-9\+]*)!i) { $new_options->{twilio_phone_number} = $1; } else { croak "Bad twilio_phone_number"; }
+    }
+    if ( ($tainted_options->{twilio_auth_token})) {
+        if ($tainted_options->{twilio_auth_token} =~ m!^([a-z0-9]*)!i) { $new_options->{twilio_auth_token} = $1; } else { croak "Bad twilio_auth_token"; }
+    }
 
     if (%$options) {
         # if options have changed, let the user know
